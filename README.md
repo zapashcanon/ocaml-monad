@@ -9,5 +9,5 @@ There are some usual suspect monads in the library, but it's currently all trans
 
 I've also implemented Spivey's stream monad, but I've generalised it a bit, and provided a data structure in labelled trees. See "A Combinator Language for Theorem Discovery (2012)" for the motivation.
 
-Applicatives are in there too, and monads inherit the interface, and the implementation of applicative functions overrides the implementation for monad functions. This means that functions such as sequence get defined in terms of pure and ap, not in terms of bind and return. I think this is probably the correct approach. For example, trees.ml is faster in its derived applicative functions than the equivalent derived monad functions, and it seems to me that's going to be true more often than its false.
+Applicatives are in there too, and monads inherit the interface, and the implementation of applicative functions overrides the implementation for monad functions. This means that functions such as sequence get defined in terms of pure and ap, not in terms of bind and return. I think this is probably the correct approach. For example, trees.ml is faster in its derived applicative functions than the equivalent derived monad functions, and it seems to me that's going to be true more often than it's false.
 

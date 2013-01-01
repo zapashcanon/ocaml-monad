@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Tagtree.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="LazyList" rel="Chapter" href="LazyList.html">
+<link title="Tagtree" rel="Chapter" href="Tagtree.html">
+<link title="Monad" rel="Chapter" href="Monad.html"><link title="Types" rel="Section" href="#6_Types">
+<link title="Creation" rel="Section" href="#6_Creation">
+<link title="Access" rel="Section" href="#6_Access">
+<link title="Predicates" rel="Section" href="#6_Predicates">
+<link title="Transformations" rel="Section" href="#6_Transformations">
+<link title="Set operations" rel="Section" href="#6_Setoperations">
+<link title="Miscellaneous" rel="Section" href="#6_Miscellaneous">
+<title>LazyList</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a href="index.html">Up</a>
+&nbsp;<a href="Tagtree.html">Next</a>
+</div>
+<center><h1>Module <a href="type_LazyList.html">LazyList</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> LazyList: <code class="code">sig</code> <a href="LazyList.html">..</a> <code class="code">end</code></pre>An alternative to the batteries lazy list library, with generally improved
+    laziness.<br>
+<b>Author(s):</b> Phil Scott<br>
+<hr width="100%">
+<br>
+<span id="6_Types"><h6>Types</h6></span><br>
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type">'a</code> t</span> = <code class="type">'a <a href="LazyList.html#TYPEnode_t">node_t</a> Lazy.t</code> </pre>
+
+<br><code><span id="TYPEnode_t"><span class="keyword">type</span> <code class="type">'a</code> node_t</span> = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Nil</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Cons</span> <span class="keyword">of</span> <code class="type">'a * 'a <a href="LazyList.html#TYPEt">t</a></code></code></td>
+
+</tr></table>
+
+
+<br>
+<span id="6_Creation"><h6>Creation</h6></span><br>
+<pre><span id="VALnil"><span class="keyword">val</span> nil</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALsingleton"><span class="keyword">val</span> singleton</span> : <code class="type">'a -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALrepeat"><span class="keyword">val</span> repeat</span> : <code class="type">'a -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+A constant stream of the input.<br>
+</div>
+<pre><span id="VALfrom"><span class="keyword">val</span> from</span> : <code class="type">(unit -> 'a) -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+A list whose elements come from unit-delayed expressions.<br>
+</div>
+<pre><span id="VALof_list"><span class="keyword">val</span> of_list</span> : <code class="type">'a list -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Convert an eager list to a lazy one.<br>
+</div>
+<pre><span id="VALrange"><span class="keyword">val</span> range</span> : <code class="type">int -> int -> int <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+The lazy list of values <code class="code">0..n</code><br>
+</div>
+<pre><span id="VALunfold"><span class="keyword">val</span> unfold</span> : <code class="type">'a -> ('a -> ('b * 'a) option) -> 'b <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Create a list using a function representing the body of a loop. The loop
+    terminates when the body returns <code class="code">None</code>.<br>
+</div>
+<pre><span id="VAL(^:^)"><span class="keyword">val</span> (^:^)</span> : <code class="type">'a -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Binary cons operator.<br>
+</div>
+<br>
+<span id="6_Access"><h6>Access</h6></span><br>
+<pre><span id="VALhd"><span class="keyword">val</span> hd</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a</code></pre><br>
+<span id="6_Predicates"><h6>Predicates</h6></span><br>
+<pre><span id="VALis_empty"><span class="keyword">val</span> is_empty</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><pre><span id="VALis_non_empty"><span class="keyword">val</span> is_non_empty</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><pre><span id="VALany"><span class="keyword">val</span> any</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><div class="info">
+Tests whether any element of the list is satisfied by a predicate.<br>
+</div>
+<pre><span id="VALall"><span class="keyword">val</span> all</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><div class="info">
+Tests whether every element of the list is satisfied by a predicate.<br>
+</div>
+<br>
+<span id="6_Transformations"><h6>Transformations</h6></span><br>
+<pre><span id="VALcons"><span class="keyword">val</span> cons</span> : <code class="type">'a -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VAL(^@^)"><span class="keyword">val</span> (^@^)</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Append<br>
+</div>
+<pre><span id="VALmap"><span class="keyword">val</span> map</span> : <code class="type">('a -> 'b) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALfilter"><span class="keyword">val</span> filter</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALfilter_map"><span class="keyword">val</span> filter_map</span> : <code class="type">('a -> 'a option) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Maps a partial function.<br>
+</div>
+<pre><span id="VALtake"><span class="keyword">val</span> take</span> : <code class="type">int -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALdrop"><span class="keyword">val</span> drop</span> : <code class="type">int -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALtake_while"><span class="keyword">val</span> take_while</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Take elements to the first element for which the predicate fails.<br>
+</div>
+<pre><span id="VALdrop_while"><span class="keyword">val</span> drop_while</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Drop elements until the first element for which the predicate fails.<br>
+</div>
+<pre><span id="VALspan"><span class="keyword">val</span> span</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> * 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+<code class="code">span p xs</code> is equivalent to <code class="code">(take_while p xs, drop_while p xs)</code>.<br>
+</div>
+<pre><span id="VALpartition"><span class="keyword">val</span> partition</span> : <code class="type">('a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> * 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Splits a list into those elements which satisfy a predicate and those which
+    don't.<br>
+</div>
+<pre><span id="VALcombine_with"><span class="keyword">val</span> combine_with</span> : <code class="type">('a -> 'b -> 'c) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'c <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Maps a binary function across corresponding elements of two lists.<br>
+</div>
+<pre><span id="VALzip_with"><span class="keyword">val</span> zip_with</span> : <code class="type">('a -> 'b -> 'c) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'c <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Maps a binary function across corresponding elements of two lists,
+    up to the length of the shortest list.<br>
+</div>
+<pre><span id="VALzip"><span class="keyword">val</span> zip</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a> -> ('a * 'b) <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Zip with pairing.<br>
+</div>
+<pre><span id="VALunzip"><span class="keyword">val</span> unzip</span> : <code class="type">('a * 'b) <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> * 'b <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALfold_right"><span class="keyword">val</span> fold_right</span> : <code class="type">('a -> 'b Lazy.t -> 'b) -> 'b -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b</code></pre><pre><span id="VALfold_right1"><span class="keyword">val</span> fold_right1</span> : <code class="type">('a -> 'a Lazy.t -> 'a) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a</code></pre><pre><span id="VALfold_left"><span class="keyword">val</span> fold_left</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'a</code></pre><pre><span id="VALfold_left1"><span class="keyword">val</span> fold_left1</span> : <code class="type">('a -> 'a -> 'a) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a</code></pre><pre><span id="VALscan"><span class="keyword">val</span> scan</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Folds but keeps successive elements.<br>
+</div>
+<pre><span id="VALscan1"><span class="keyword">val</span> scan1</span> : <code class="type">('a -> 'a -> 'a) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALmap_accum_l"><span class="keyword">val</span> map_accum_l</span> : <code class="type">('a -> 'b -> 'a * 'c) -> 'a -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'c <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Maps a function across a list whilst accumulating a state value.<br>
+</div>
+<pre><span id="VALmap_accum_l2"><span class="keyword">val</span> map_accum_l2</span> : <code class="type">('a -> 'b -> 'a Lazy.t * 'c) -><br>       'a -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'a Lazy.t * 'c <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+As map_accum_l, but also returns the final accumulated value. The input
+    list will be forced only once, even if both components of the pair are
+    forced. However, two passes of the list are still required.<br>
+</div>
+<pre><span id="VALconcat"><span class="keyword">val</span> concat</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALflatten"><span class="keyword">val</span> flatten</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> list -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Concatenation eager in the outer list.<br>
+</div>
+<pre><span id="VALconcat_map"><span class="keyword">val</span> concat_map</span> : <code class="type">('a -> 'b <a href="LazyList.html#TYPEt">t</a>) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+As <code class="code">fun f xss -&gt; concat (map f xs)</code><br>
+</div>
+<pre><span id="VALinits"><span class="keyword">val</span> inits</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+The prefixes of a list starting from <code class="code">nil</code>.<br>
+</div>
+<pre><span id="VALtails"><span class="keyword">val</span> tails</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+The suffixes of a list starting from the list itself.<br>
+</div>
+<pre><span id="VALinterleave"><span class="keyword">val</span> interleave</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALapl"><span class="keyword">val</span> apl</span> : <code class="type">('a -> 'b) <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'b <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Non-deterministic application in lists.<br>
+</div>
+<br>
+<span id="6_Setoperations"><h6>Set operations</h6></span><br>
+<pre><span id="VALmem"><span class="keyword">val</span> mem</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a -> 'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><div class="info">
+Tests whether an element belongs to the list.<br>
+</div>
+<pre><span id="VALsubset"><span class="keyword">val</span> subset</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><div class="info">
+Tests whether every element in the first list is equivalent to the elements
+    in the second list.<br>
+</div>
+<pre><span id="VALunique"><span class="keyword">val</span> unique</span> : <code class="type">('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Remove duplicates from a list.<br>
+</div>
+<pre><span id="VALmem"><span class="keyword">val</span> mem</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a -> 'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><pre><span id="VALdifference"><span class="keyword">val</span> difference</span> : <code class="type">('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Based on a partial order. Any element in the first argument which is
+    smaller than an element in the second is removed.<br>
+</div>
+<pre><span id="VALunion"><span class="keyword">val</span> union</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALintersect"><span class="keyword">val</span> intersect</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Retains elements in the first argument which are equivalent to some element
+    in the second.<br>
+</div>
+<pre><span id="VALintersect_class"><span class="keyword">val</span> intersect_class</span> : <code class="type">?cmp:('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Retains elements in the first argument which are equivalent to some element
+    in the second, and vice versa.<br>
+</div>
+<pre><span id="VALcat_option"><span class="keyword">val</span> cat_option</span> : <code class="type">'a option <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Filters out all <code class="code">None</code>s and strips <code class="code">Some</code>s.<br>
+</div>
+<pre><span id="VALmaxima"><span class="keyword">val</span> maxima</span> : <code class="type">('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Reduce a list to its maxima according to the partial-order.<br>
+</div>
+<pre><span id="VALnub"><span class="keyword">val</span> nub</span> : <code class="type">('a -> 'a -> bool) -> 'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Haskell style nub.<br>
+</div>
+<br>
+<span id="6_Miscellaneous"><h6>Miscellaneous</h6></span><br>
+<pre><span id="VALtl"><span class="keyword">val</span> tl</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><pre><span id="VALlength"><span class="keyword">val</span> length</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> int</code></pre><pre><span id="VALnext"><span class="keyword">val</span> next</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEnode_t">node_t</a></code></pre><div class="info">
+Force the first node in a list.<br>
+</div>
+<pre><span id="VALof_delay"><span class="keyword">val</span> of_delay</span> : <code class="type">(unit -> 'a <a href="LazyList.html#TYPEt">t</a>) -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+The following function is sometimes useful for defining recursive lists.<br>
+</div>
+<pre><span id="VALiter"><span class="keyword">val</span> iter</span> : <code class="type">('a -> unit) -> 'a <a href="LazyList.html#TYPEt">t</a> -> unit</code></pre><div class="info">
+Loops a side-effecting procedure over the elements of a list.<br>
+</div>
+<pre><span id="VALto_list"><span class="keyword">val</span> to_list</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a list</code></pre><pre><span id="VALenum"><span class="keyword">val</span> enum</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a BatEnum.t</code></pre><pre><span id="VALis_forced"><span class="keyword">val</span> is_forced</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> bool</code></pre><div class="info">
+True if the whole list has been forced.<br>
+</div>
+<pre><span id="VALto_forced"><span class="keyword">val</span> to_forced</span> : <code class="type">'a <a href="LazyList.html#TYPEt">t</a> -> 'a <a href="LazyList.html#TYPEt">t</a></code></pre><div class="info">
+Retrieve as much of a lazy list as has been forced to far.<br>
+</div>
+<pre><span id="VALfind_all"><span class="keyword">val</span> find_all</span> : <code class="type">('a -> 'b -> bool) -> 'a list -> 'b <a href="LazyList.html#TYPEt">t</a> -> 'b list</code></pre><div class="info">
+Find all elements of a set.<br>
+</div>
+</body></html>

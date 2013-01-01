@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Monad.Monad.html">
+<link rel="next" href="Monad.LazyPlus.html">
+<link rel="Up" href="Monad.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="LazyList" rel="Chapter" href="LazyList.html">
+<link title="Tagtree" rel="Chapter" href="Tagtree.html">
+<link title="Monad" rel="Chapter" href="Monad.html"><title>Monad.MonadPlus</title>
+</head>
+<body>
+<div class="navbar"><a href="Monad.Monad.html">Previous</a>
+&nbsp;<a href="Monad.html">Up</a>
+&nbsp;<a href="Monad.LazyPlus.html">Next</a>
+</div>
+<center><h1>Module type <a href="type_Monad.MonadPlus.html">Monad.MonadPlus</a></h1></center>
+<br>
+<pre><span class="keyword">module type</span> MonadPlus = <code class="code">sig</code> <a href="Monad.MonadPlus.html">..</a> <code class="code">end</code></pre>Library functions for monads with additional structure..<br>
+<hr width="100%">
+<pre><span class="keyword">include</span> <a href="Monad.Monad.html">Monad.Monad</a></pre>
+<pre><span id="VALzero"><span class="keyword">val</span> zero</span> : <code class="type">unit -> 'a m</code></pre><pre><span id="VALplus"><span class="keyword">val</span> plus</span> : <code class="type">'a m -> 'a m -> 'a m</code></pre><pre><span id="VALnull"><span class="keyword">val</span> null</span> : <code class="type">'a m -> bool</code></pre><pre><span id="VALfilter"><span class="keyword">val</span> filter</span> : <code class="type">('a -> bool) -> 'a m -> 'a m</code></pre><pre><span id="VALof_list"><span class="keyword">val</span> of_list</span> : <code class="type">'a list -> 'a m</code></pre><pre><span id="VALmconcat"><span class="keyword">val</span> mconcat</span> : <code class="type">'a m list -> 'a m</code></pre></body></html>

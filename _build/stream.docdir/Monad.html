@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Tagtree.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="LazyList" rel="Chapter" href="LazyList.html">
+<link title="Tagtree" rel="Chapter" href="Tagtree.html">
+<link title="Monad" rel="Chapter" href="Monad.html"><link title="Base Modules" rel="Section" href="#6_BaseModules">
+<link title="Library Types " rel="Section" href="#6_LibraryTypes">
+<link title="Library Creation" rel="Section" href="#6_LibraryCreation">
+<link title="Transformers" rel="Section" href="#6_Transformers">
+<title>Monad</title>
+</head>
+<body>
+<div class="navbar"><a href="Tagtree.html">Previous</a>
+&nbsp;<a href="index.html">Up</a>
+&nbsp;</div>
+<center><h1>Module <a href="type_Monad.html">Monad</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Monad: <code class="code">sig</code> <a href="Monad.html">..</a> <code class="code">end</code></pre>Monads with additional structure.<br>
+<b>Author(s):</b> Phil Scott<br>
+<hr width="100%">
+<br>
+<span id="6_BaseModules"><h6>Base Modules</h6></span><br>
+<pre><span class="keyword">module type</span> <a href="Monad.Monoid.html">Monoid</a> = <code class="code">sig</code> <a href="Monad.Monoid.html">..</a> <code class="code">end</code></pre><pre><span class="keyword">module type</span> <a href="Monad.BasePlus.html">BasePlus</a> = <code class="code">sig</code> <a href="Monad.BasePlus.html">..</a> <code class="code">end</code></pre><div class="info">
+Monads with additional monoid structure.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.BaseLazyPlus.html">BaseLazyPlus</a> = <code class="code">sig</code> <a href="Monad.BaseLazyPlus.html">..</a> <code class="code">end</code></pre><div class="info">
+LazyPlus provides a plus operation which is non-strict in its second
+    argument.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.Writer.html">Writer</a> = <code class="code">sig</code> <a href="Monad.Writer.html">..</a> <code class="code">end</code></pre><div class="info">
+A writer allows an additional output value to be written during
+    computations and accumulated into a final result.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.BaseCollectionM.html">BaseCollectionM</a> = <code class="code">sig</code> <a href="Monad.BaseCollectionM.html">..</a> <code class="code">end</code></pre><div class="info">
+Monads for collections.
+</div>
+<br>
+<span id="6_LibraryTypes"><h6>Library Types </h6></span><br>
+<pre><span class="keyword">module type</span> <a href="Monad.Monad.html">Monad</a> = <code class="code">sig</code> <a href="Monad.Monad.html">..</a> <code class="code">end</code></pre><div class="info">
+Library functions for monads.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.MonadPlus.html">MonadPlus</a> = <code class="code">sig</code> <a href="Monad.MonadPlus.html">..</a> <code class="code">end</code></pre><div class="info">
+Library functions for monads with additional structure..
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.LazyPlus.html">LazyPlus</a> = <code class="code">sig</code> <a href="Monad.LazyPlus.html">..</a> <code class="code">end</code></pre><div class="info">
+Library functions for lazy monads.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.Stream.html">Stream</a> = <code class="code">sig</code> <a href="Monad.Stream.html">..</a> <code class="code">end</code></pre><div class="info">
+Streams supporting unbounded search.
+</div>
+<pre><span class="keyword">module type</span> <a href="Monad.StreamC.html">StreamC</a> = <code class="code">sig</code> <a href="Monad.StreamC.html">..</a> <code class="code">end</code></pre><div class="info">
+Streams whose generations are themselves collections
+</div>
+<br>
+<span id="6_LibraryCreation"><h6>Library Creation</h6></span><br>
+<pre><span class="keyword">module</span> <a href="Monad.Make.html">Make</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="type"><a href="Monad.Monad.html">Monad</a></code><code class="type">  with type 'a m = 'a M.m</code></div></pre><div class="info">
+Monad library.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.MakePlus.html">MakePlus</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type"><a href="Monad.BasePlus.html">BasePlus</a></code><code class="code">) -&gt; </code><code class="type"><a href="Monad.MonadPlus.html">MonadPlus</a></code><code class="type">  with type 'a m = 'a M.m</code></div></pre><div class="info">
+MonadPlus library.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.MakeLazyPlus.html">MakeLazyPlus</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type"><a href="Monad.BaseLazyPlus.html">BaseLazyPlus</a></code><code class="code">) -&gt; </code><code class="type"><a href="Monad.LazyPlus.html">LazyPlus</a></code><code class="type">  with type 'a m = 'a M.m</code></div></pre><div class="info">
+LazyPlus library.
+</div>
+<br>
+Defined Monads<br>
+<pre><span class="keyword">module</span> <a href="Monad.LazyM.html">LazyM</a>: <code class="type">BatMonad.S</code><code class="type">  with type 'a m = 'a Lazy.t</code></pre><pre><span class="keyword">module</span> <a href="Monad.Lazyt.html">Lazyt</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="type">BatMonad.S</code><code class="type"> 
+  with type 'a m = 'a Lazy.t M.m</code></div></pre><pre><span class="keyword">module</span> <a href="Monad.List.html">List</a>: <code class="type"><a href="Monad.BasePlus.html">BasePlus</a></code><code class="type">  with type 'a m = 'a list</code></pre><pre><span class="keyword">module</span> <a href="Monad.LazyListM.html">LazyListM</a>: <code class="type"><a href="Monad.BaseLazyPlus.html">BaseLazyPlus</a></code><code class="type">  with type 'a m = 'a LazyList.t</code></pre><pre><span class="keyword">module</span> <a href="Monad.Option.html">Option</a>: <code class="type"><a href="Monad.BasePlus.html">BasePlus</a></code><code class="type">  with type 'a m = 'a option</code></pre><pre><span class="keyword">module</span> <a href="Monad.State.html">State</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">T</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEs"><span class="keyword">type</span> <code class="type"></code>s</span> </pre>
+
+</div><code class="code">end</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.State.html">..</a> <code class="code">end</code></div></pre><pre><span class="keyword">module</span> <a href="Monad.MakeWriter.html">MakeWriter</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type"><a href="Monad.Monoid.html">Monoid</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.MakeWriter.html">..</a> <code class="code">end</code></div></pre><div class="info">
+A writer which combines the output values using some plus
+    operation.
+</div>
+<br>
+<span id="6_Transformers"><h6>Transformers</h6></span><br>
+<pre><span class="keyword">module</span> <a href="Monad.Listt.html">Listt</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="type">BatMonad.S</code><code class="type">  with type 'a m = 'a list M.m</code></div></pre><div class="info">
+List monad transformer.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.Optiont.html">Optiont</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="type">BatMonad.S</code><code class="type"> 
+  with type 'a m = 'a option M.m</code></div></pre><div class="info">
+Option monad transformer
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.Statet.html">Statet</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">T</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEs"><span class="keyword">type</span> <code class="type"></code>s</span> </pre>
+
+</div><code class="code">end</code><code class="code">) -&gt; </code><div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.Statet.html">..</a> <code class="code">end</code></div></div></pre><div class="info">
+State monad transformer
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.Writert.html">Writert</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">W</code><code class="code"> : </code><code class="type"><a href="Monad.Writer.html">Writer</a></code><code class="code">) -&gt; </code><div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="type">BatMonad.S</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.Writert.html">..</a> <code class="code">end</code></div></div></pre><div class="info">
+A monad transformer for Writer.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.MakeStream.html">MakeStream</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span class="keyword">include</span> Monad.BaseLazyPlus</pre>
+<pre><span class="keyword">include</span> Applicative.Base</pre>
+</div><code class="code">end</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.MakeStream.html">..</a> <code class="code">end</code></div></pre><div class="info">
+The plus operation of the inner monoid should be <code class="code">i commutative</code>,
+    or alternatively, values should only be extracted by an embedding
+    into a commutative monoid such as sort.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.MakeStreamC.html">MakeStreamC</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">M</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span class="keyword">include</span> Monad.BaseCollectionM</pre>
+<pre><span class="keyword">include</span> Applicative.Base</pre>
+</div><code class="code">end</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.MakeStreamC.html">..</a> <code class="code">end</code></div></pre><div class="info">
+Creation of a stream with underlying type <code class="code">'a CollectionM.m</code>.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.CollectionOpt.html">CollectionOpt</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">C</code><code class="code"> : </code><code class="type"><a href="Monad.BaseCollectionM.html">BaseCollectionM</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.CollectionOpt.html">..</a> <code class="code">end</code></div></pre><div class="info">
+Transformer allowing optional values in a collection.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.CollectionWriter.html">CollectionWriter</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">W</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span class="keyword">include</span> Monad.Writer</pre>
+<pre><span id="VALcmp"><span class="keyword">val</span> cmp</span> : <code class="type">t -> t -> bool</code></pre></div><code class="code">end</code><code class="code">) -&gt; </code><div class="sig_block"><code class="code">functor (</code><code class="code">C</code><code class="code"> : </code><code class="type"><a href="Monad.BaseCollectionM.html">BaseCollectionM</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.CollectionWriter.html">..</a> <code class="code">end</code></div></div></pre><div class="info">
+Transformer for writing data inside a collection.
+</div>
+<pre><span class="keyword">module</span> <a href="Monad.CollectionState.html">CollectionState</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">T</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEs"><span class="keyword">type</span> <code class="type"></code>s</span> </pre>
+
+<pre><span id="VALcmp"><span class="keyword">val</span> cmp</span> : <code class="type">s -> s -> bool</code></pre></div><code class="code">end</code><code class="code">) -&gt; </code><div class="sig_block"><code class="code">functor (</code><code class="code">C</code><code class="code"> : </code><code class="type"><a href="Monad.BaseCollectionM.html">BaseCollectionM</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.CollectionState.html">..</a> <code class="code">end</code></div></div></pre><div class="info">
+State inside a collection.
+</div>
+</body></html>

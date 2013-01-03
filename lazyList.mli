@@ -58,7 +58,7 @@ val map : ('a -> 'b) -> 'a t -> 'b t
 val filter : ('a -> bool) -> 'a t -> 'a t
 
 (** Maps a partial function. *)
-val filter_map : ('a -> 'a option) -> 'a t -> 'a t
+val filter_map : ('a -> 'b option) -> 'a t -> 'b t
 
 val take : int -> 'a t -> 'a t
 val drop : int -> 'a t -> 'a t

@@ -1,9 +1,11 @@
 /_build
 /_tags
+/_tags
 /monad.docdir
 /myocamlbuild.ml
 /notes.org
 /setup.data
 /setup.log
 /setup.ml
+/stream.odocl
 /test.ml

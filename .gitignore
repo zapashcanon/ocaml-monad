@@ -1,2 +1,8 @@
+/_tags
+/monad.docdir
+/myocamlbuild.ml
 /notes.org
+/setup.data
+/setup.log
+/setup.ml
 /test.ml

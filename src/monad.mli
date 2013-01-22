@@ -14,7 +14,7 @@ end
 (** Monads with additional monoid structure. *)
 module type BasePlus =
 sig
-  include BatMonad.S
+  include BatInterfaces.Monad
   val zero : unit -> 'a m
   val plus : 'a m -> 'a m -> 'a m    
 
@@ -27,7 +27,7 @@ end
     argument. *)
 module type BaseLazyPlus =
 sig
-  include BatMonad.S
+  include BatInterfaces.Monad
   val zero  : unit -> 'a m
 
   val lplus : 'a m -> 'a m Lazy.t -> 'a m
@@ -42,7 +42,7 @@ end
 module type Writer =
 sig
   type t
-  include BatMonad.S
+  include BatInterfaces.Monad
 
   (** Listen to the written value. *)
   val listen : 'a m -> (t * 'a) m
@@ -69,7 +69,7 @@ end
 (** Library functions for monads. *)  
 module type Monad =
 sig
-  include BatMonad.S 
+  include BatInterfaces.Monad 
   include Applicative.Applicative with type 'a m := 'a m
 
   val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
@@ -140,7 +140,7 @@ end
 (** {6 Library Creation} *)
 
 (** Monad library. *)  
-module Make(M : BatMonad.S) : Monad with type 'a m = 'a M.m
+module Make(M : BatInterfaces.Monad) : Monad with type 'a m = 'a M.m
 
 (** MonadPlus library. *)
 module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m
@@ -150,9 +150,9 @@ module MakeLazyPlus (M : BaseLazyPlus) : LazyPlus with type 'a m = 'a M.m
 
 (** Defined Monads *)
     
-module LazyM : BatMonad.S with type 'a m = 'a Lazy.t
+module LazyM : BatInterfaces.Monad with type 'a m = 'a Lazy.t
 
-module Lazyt(M : BatMonad.S) : BatMonad.S
+module Lazyt(M : BatInterfaces.Monad) : BatInterfaces.Monad
   with type 'a m = 'a Lazy.t M.m
 
 module List : BasePlus with type 'a m = 'a list
@@ -163,7 +163,7 @@ module Option : BasePlus with type 'a m = 'a option
 
 module State(T : sig type s end) :
 sig
-  include BatMonad.S 
+  include BatInterfaces.Monad 
 
   val read  : T.s m
   val write : T.s -> unit m
@@ -179,25 +179,25 @@ end
 (** {6 Transformers} *)
 
 (** List monad transformer. *)
-module Listt(M : BatMonad.S) : BatMonad.S with type 'a m = 'a list M.m
+module Listt(M : BatInterfaces.Monad) : BatInterfaces.Monad with type 'a m = 'a list M.m
 
 (** Option monad transformer *)  
-module Optiont(M : BatMonad.S) : BatMonad.S
+module Optiont(M : BatInterfaces.Monad) : BatInterfaces.Monad
   with type 'a m = 'a option M.m
 
 (** State monad transformer *)
-module Statet(T : sig type s end)(M : BatMonad.S) :
+module Statet(T : sig type s end)(M : BatInterfaces.Monad) :
 sig
-  include BatMonad.S 
+  include BatInterfaces.Monad 
 
   val read  : T.s m
   val write : T.s -> unit m
 end
 
 (** A monad transformer for Writer. *)  
-module Writert(W : Writer)(M : BatMonad.S) :
+module Writert(W : Writer)(M : BatInterfaces.Monad) :
 sig
-  include BatMonad.S
+  include BatInterfaces.Monad
   val listen : 'a m -> (W.t * 'a) m
   val write  : W.t -> unit m
   val pass   : 'a M.m -> 'a m    

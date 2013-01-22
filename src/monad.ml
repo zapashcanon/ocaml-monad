@@ -2,7 +2,7 @@ open LazyList
 
 module type BasePlus =
 sig
-  include BatMonad.S
+  include BatInterfaces.Monad
   val zero : unit -> 'a m
   val plus : 'a m -> 'a m -> 'a m
   val null : 'a m -> bool
@@ -10,7 +10,7 @@ end
 
 module type BaseLazyPlus =
 sig
-  include BatMonad.S
+  include BatInterfaces.Monad
   val zero : unit -> 'a m
   val lplus : 'a m -> 'a m Lazy.t -> 'a m
   val null : 'a m -> bool
@@ -18,7 +18,7 @@ end
 
 module type Monad =
 sig
-  include BatMonad.S 
+  include BatInterfaces.Monad 
   include Applicative.Applicative with type 'a m := 'a m
 
   val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
@@ -47,7 +47,7 @@ sig
   val transpose : 'a LazyList.t m -> 'a m LazyList.t
 end
 
-module Make(M : BatMonad.S) =
+module Make(M : BatInterfaces.Monad) =
 struct
   include M
 
@@ -252,7 +252,7 @@ struct
     lazy (Lazy.force (f (Lazy.force x)))
 end
 
-module Lazyt(M : BatMonad.S) =
+module Lazyt(M : BatInterfaces.Monad) =
 struct
   module M  = Make(M)
   type 'a m = 'a Lazy.t M.m
@@ -274,7 +274,7 @@ struct
     | _  -> false
 end
 
-module Listt(M : BatMonad.S) =
+module Listt(M : BatInterfaces.Monad) =
 struct
   module M = Make(M)
   type 'a m = 'a list M.m
@@ -314,7 +314,7 @@ struct
   let null      = BatOption.is_none
 end
 
-module Optiont(M : BatMonad.S) =
+module Optiont(M : BatInterfaces.Monad) =
 struct
   type 'a m = 'a option M.m
   let return x  = M.return (Some x)
@@ -336,7 +336,7 @@ struct
   let write x s = (x,())
 end
 
-module Statet(T : sig type s end)(M : BatMonad.S) =
+module Statet(T : sig type s end)(M : BatInterfaces.Monad) =
 struct
   type 'a m = T.s -> (T.s * 'a) M.m
   let return x s  = M.return (s, x)
@@ -356,7 +356,7 @@ end
 module type Writer =
 sig
   type t
-  include BatMonad.S
+  include BatInterfaces.Monad
   val listen : 'a m -> (t * 'a) m
   val run   : 'a m -> t * 'a
   val write : t -> unit m
@@ -375,7 +375,7 @@ struct
   let write x      = (x,())
 end
   
-module Writert(W : Writer)(M : BatMonad.S) =
+module Writert(W : Writer)(M : BatInterfaces.Monad) =
 struct
   module M = Make(M)
   type t = W.t

@@ -1,5 +1,0 @@
-version = "0.0"
-description = "Monads"
-requires="batteries"
-archive(byte) = "monad.cma, tagtree.cma"
-archive(native) = "monad.cmxa, tagtree.cmxa"

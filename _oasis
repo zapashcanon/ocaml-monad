@@ -1,0 +1,27 @@
+OASISFormat: 0.3
+Name:        ocaml-monad
+Version:     0.1
+Synopsis:    Monads and applicatives with transformers.
+Authors:     Phil Scott
+License:     MIT
+LicenseFile: LICENCE
+Copyrights:  (C) 2013 Phil Scott
+BuildTools:  ocamlbuild
+Plugins:     META (0.3)
+
+Library monad
+  Path:         src
+  Modules:      LazyList, TagTree, Monad, Applicative
+  BuildDepends: batteries
+  Install:      true
+  XMETAEnable:  true
+
+Document monad
+  Title:                API reference for ocaml-monad
+  Type:                 ocamlbuild (0.3)
+  InstallDir:           $htmldir/interdepend
+  Install:              true
+  BuildTools+:          ocamldoc
+  XOCamlbuildPath:      src
+  XOCamlbuildModules:   LazyList, TagTree, Monad, Applicative
+  

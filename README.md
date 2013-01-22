@@ -21,12 +21,12 @@ Installation
 
 Depends on oasis.
 
-$ oasis setup
+```$ oasis setup
 $ ocaml setup.ml -configure
 $ ocaml setup.ml -build
-$ ocaml setup.ml -install
+$ ocaml setup.ml -install```
 
 For documentation:
 
-$ ocaml setup.ml -doc
+```$ ocaml setup.ml -doc```
 

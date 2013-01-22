@@ -12,7 +12,7 @@ The lazy lists here are lazier than those of BatLazyList. If you're writing real
 
 There are some usual suspect monads in the library. Basic monads are provided, as well as transformers for many of those monads. Warning: transformer code is verbose in Ocaml compared with Haskell.
 
-Included is an implementation of Spivey's stream monad based on an abstract inner "bag" collection. Use lazy lists for a simple implementation. For a more complex example useful in, say, theorem proving, use TagTree. (See "A Combinator Language for Theorem Discovery (2012)" for the motivation.)
+Included is an implementation of Spivey's stream monad based on an abstract inner "bag" collection. Use lazy lists for a simple implementation. For a more complex example useful in, say, theorem proving, use TagTree. (See http://link.springer.com/chapter/10.1007%2F978-3-642-31374-5_25)
 
 Applicatives are provided and the implementation of applicative functions overrides the implementation for monad functions. This means that functions such as sequence get defined in terms of pure and ap, not in terms of bind and return. I think this is the correct approach. For example, a TagTree is faster in its derived applicative functions than the equivalent derived monad functions, and it seems to me that's going to be true more often than it's false.
 

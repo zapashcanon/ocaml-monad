@@ -19,9 +19,6 @@ Applicatives are provided and the implementation of applicative functions overri
 Installation
 ------------
 
-Depends on oasis.
-
-    $ oasis setup
     $ ocaml setup.ml -configure
     $ ocaml setup.ml -build
     $ ocaml setup.ml -install

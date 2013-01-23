@@ -1,5 +1,5 @@
 OASISFormat: 0.3
-Name:        ocaml-monad
+Name:        monadlib
 Version:     0.1
 Synopsis:    A starter library for monads, with transformers and applicatives.
 Authors:     Phil Scott
@@ -9,15 +9,15 @@ Copyrights:  (C) 2013 Phil Scott
 BuildTools:  ocamlbuild
 Plugins:     META (0.3)
 
-Library monad
+Library monadlib
   Path:         src
   Modules:      LazyList, TagTree, Monad, Applicative
   BuildDepends: batteries (>= 2.0)
   Install:      true
   XMETAEnable:  true
 
-Document monad
-  Title:                API reference for ocaml-monad
+Document monadlib
+  Title:                API reference for monadlib
   Type:                 ocamlbuild (0.3)
   InstallDir:           $htmldir/interdepend
   Install:              true

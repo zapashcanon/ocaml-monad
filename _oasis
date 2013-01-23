@@ -1,7 +1,7 @@
 OASISFormat: 0.3
 Name:        ocaml-monad
 Version:     0.1
-Synopsis:    Monads and applicatives with transformers.
+Synopsis:    A starter library for monads, with transformers and applicatives.
 Authors:     Phil Scott
 License:     MIT
 LicenseFile: LICENCE
@@ -12,7 +12,7 @@ Plugins:     META (0.3)
 Library monad
   Path:         src
   Modules:      LazyList, TagTree, Monad, Applicative
-  BuildDepends: batteries (>= 2.0.0)
+  BuildDepends: batteries (>= 2.0)
   Install:      true
   XMETAEnable:  true
 

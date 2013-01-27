@@ -1,3 +1,6 @@
+module Ll = LazyList
+let (^:^) = Ll.(^:^)
+
 module type Base =
 sig
   type 'a m
@@ -10,10 +13,10 @@ module type BasePlus =
 sig
   include Base
   val zero : unit -> 'a m
-  val plus : 'a m -> 'a m -> 'a m    
+  val plus : 'a m -> 'a m -> 'a m
 
   (** null x implies that x is zero. If you do not want to or cannot
-      answer whether a given x is zero, then null x should be false. *) 
+      answer whether a given x is zero, then null x should be false. *)
   val null : 'a m -> bool
 end
 
@@ -27,7 +30,7 @@ sig
   val lplus : 'a m -> 'a m Lazy.t -> 'a m
 
   (** null x implies that x is zero. If you do not want to or cannot
-      answer whether a given x is zero, then null x should be false. *) 
+      answer whether a given x is zero, then null x should be false. *)
   val null  : 'a m -> bool
 end
 
@@ -40,18 +43,21 @@ sig
   val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
   val sequence : 'a m list -> 'a list m
-end    
+  val map_a : ('a -> 'b m) -> 'a list -> 'b list m
+end
 
 module Make(A : Base) =
 struct
   include A
-    
+
   let lift1 f x     = ap (return f) x
   let lift2 f x y   = ap (lift1 f x) y
   let lift3 f x y z = ap (lift2 f x y) z
 
   let sequence ms = List.fold_left (lift2 (fun xs x -> x :: xs))
     (return []) ms
+
+  let map_a f xs = sequence (List.map f xs)
 end
 
 module Transform(A : Base)(Inner : Base) =

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Monad.Monad.html">
+<link rel="next" href="Monad.LazyPlus.html">
+<link rel="Up" href="Monad.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="LazyList" rel="Chapter" href="LazyList.html">
+<link title="TagTree" rel="Chapter" href="TagTree.html">
+<link title="Monad" rel="Chapter" href="Monad.html">
+<link title="Applicative" rel="Chapter" href="Applicative.html"><title>Monad.MonadPlus</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Monad.Monad.html" title="Monad.Monad">Previous</a>
+&nbsp;<a class="up" href="Monad.html" title="Monad">Up</a>
+&nbsp;<a class="post" href="Monad.LazyPlus.html" title="Monad.LazyPlus">Next</a>
+</div>
+<h1>Module type <a href="type_Monad.MonadPlus.html">Monad.MonadPlus</a></h1>
+<pre><span class="keyword">module type</span> MonadPlus = <code class="code">sig</code> <a href="Monad.MonadPlus.html">..</a> <code class="code">end</code></pre><div class="info">
+Library functions for monads with additional monoid structure.<br>
+</div>
+<hr width="100%">
+<pre><span class="keyword">include</span> <a href="Monad.BasePlus.html">Monad.BasePlus</a></pre>
+<pre><span class="keyword">include</span> <a href="Monad.Monad.html">Monad.Monad</a></pre>
+<pre><span id="VALfilter"><span class="keyword">val</span> filter</span> : <code class="type">('a -> bool) -> 'a m -> 'a m</code></pre><div class="info">
+Not to be confused with filter_m. Here, we have an ordinary predicate on
+  <code class="code">'a</code> with which we can filter out values from a computation.<br>
+</div>
+<pre><span id="VALof_list"><span class="keyword">val</span> of_list</span> : <code class="type">'a list -> 'a m</code></pre><div class="info">
+Turn a list of values into a computation of those possible values.<br>
+</div>
+<pre><span id="VALsum"><span class="keyword">val</span> sum</span> : <code class="type">'a list m -> 'a m</code></pre><div class="info">
+Turn a computation of a list into a computation of its possible values.<br>
+</div>
+<pre><span id="VALmsum"><span class="keyword">val</span> msum</span> : <code class="type">'a m list -> 'a m</code></pre><div class="info">
+fold the <code class="code">plus</code> across a list.<br>
+</div>
+<pre><span id="VALtranspose"><span class="keyword">val</span> transpose</span> : <code class="type">'a list m -> 'a m list</code></pre><div class="info">
+Generalises matrix transposition: given a computation of lists, return
+  a list containing, in order: all possible first elements; all possible
+  second elements; all possible third elements, and so on. This will loop
+  infinitely if <a href="Monad.BasePlus.html#VALnull"><code class="code">Monad.BasePlus.null</code></a> cannot answer <code class="code">true</code> for <code class="code">zero</code>es.<br>
+</div>
+</body></html>

@@ -36,6 +36,7 @@ sig
   val of_list : 'a list -> 'a m
   val sum       : 'a list m -> 'a m
   val msum      : 'a m list -> 'a m
+  val guard     : bool -> 'a m -> 'a m
   val transpose : 'a list m -> 'a m list
 end
 
@@ -61,7 +62,7 @@ struct
   module Ap =
     Applicative.Make(struct
       include M
-      let ap f x  = lift2 (fun f x -> f x) f x
+      let (<*>) f x  = lift2 (fun f x -> f x) f x
     end)
 
   include (Ap : Applicative.Applicative with type 'a m := 'a m)
@@ -92,6 +93,8 @@ struct
     xs >>=
       (fun xs -> List.fold_right plus (List.map return xs) (zero ()))
   let msum xs = List.fold_left plus (zero ()) xs
+
+  let guard b x = if b then x else zero ()
 
   let rec transpose xs =
     let hds = sum (lift1 (BatList.take 1) xs) in
@@ -170,7 +173,7 @@ struct
       shift xs
     in join (Ll.map (ML.lift1 f) xs)
 
-  let ap fs xs =
+  let (<*>) fs xs =
     let rec shift fs =
       lazy (match Ll.next fs with
           Ll.Nil -> Ll.Nil
@@ -180,7 +183,7 @@ struct
                the empty generation is uselessly applied across xs. *)
             (if ML.null f' then delay (shift fs')
              else plus
-                (Ll.map (M.ap f') xs)
+                (Ll.map (M.(<*>) f') xs)
                 (delay (shift fs')))) in
     shift fs
 

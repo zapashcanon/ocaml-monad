@@ -342,6 +342,9 @@ sig
   (** fold the [plus] across a list. *)
   val msum : 'a m list -> 'a m
 
+  (** Run a computation if a given condition holds, otherwise fail. *)
+  val guard : bool -> 'a m -> 'a m
+
   (** Generalises matrix transposition: given a computation of lists, return
   a list containing, in order: all possible first elements; all possible
   second elements; all possible third elements, and so on. This will loop

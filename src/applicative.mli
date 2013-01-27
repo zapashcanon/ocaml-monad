@@ -1,9 +1,10 @@
 (** Applicative functors.
 
-    An applicative functor (or idiom) is more general than a monad, in as much as there are many more applicative functors out there than there are monads. That means they should be easier to find! Applicative functors have a nice library, and you can do some interesting things with them, and you get to assume more constraints on how they behave than you do with monads.
+    An applicative functor (or idiom) is more general than a monad, so you'll be able to find more applicative functors out there than you will monads. Applicative functors have a nice library, and you get to assume more constraints on how they behave than you do with monads.
+
+    With {! TagTree}, I noticed that the derived applicative library is much more efficient than the derived monad library. So in the {! Monad}, I have made sure that all of the applicative functions override the monad ones. 
 
     @author Phil Scott
-
 *)
 
 (** {6 Base Modules} *)
@@ -16,11 +17,11 @@ sig
   (** The function [return] is much the same as that for the monad. We just lift a single value. *)
   val return : 'a -> 'a m
 
-  (** The function [ap] sends a computed function to a function of computations. *)
-  val ap : ('a -> 'b) m -> 'a m -> 'b m
+  (** The function [(<*>)] sends a computed function to a function of computations. This function can be defined from [bind] and [return], but not vice versa. *)
+  val (<*>) : ('a -> 'b) m -> 'a m -> 'b m
 end
 
-(** Applicatives with additional monoid structure. *)
+(** Applicatives with additional structure. See {! Monad.BasePlus}. *)
 module type BasePlus =
 sig
   include Base
@@ -33,7 +34,7 @@ sig
 end
 
 (** LazyPlus provides a plus operation which is non-strict in its second
-    argument. *)
+    argument. See {! Monad.LazyPlus} *)
 module type BaseLazyPlus =
 sig
   include Base
@@ -61,11 +62,20 @@ sig
   (** We can send a list of computations to a computation of a list. *)
   val sequence : 'a m list -> 'a list m
 
-  (** We can lift map. A function which computes ['b] from ['a] can compute a list of ['b] from a list of ['a]. *)
+  (** We can lift map. A function which computes ['b] from ['a] can compute a
+  list of ['b] from a list of ['a]. *)
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
+
+  (** Sequence two computations, returning the result of the left one. *)
+  val (<*) : 'a m -> 'a m -> 'a m
+
+  (** Sequence two computations, returning the result of the right one. *)
+  val (>*) : 'a m -> 'a m -> 'a m
+
 end
 
 module Make(A : Base) : Applicative with type 'a m = 'a A.m
 
 (** {6 Transformer } *)
+(** Trasformers for applicatives are dead easy. *)
 module Transform(A : Base)(Inner : Base) : Base with type 'a m = 'a Inner.m A.m

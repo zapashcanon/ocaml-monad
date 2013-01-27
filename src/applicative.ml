@@ -5,7 +5,7 @@ module type Base =
 sig
   type 'a m
   val return : 'a -> 'a m
-  val ap : ('a -> 'b) m -> 'a m -> 'b m
+  val (<*>) : ('a -> 'b) m -> 'a m -> 'b m
 end
 
 (** Applicatives with additional monoid structure. *)
@@ -44,15 +44,21 @@ sig
 
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
+
+  val (<*) : 'a m -> 'a m -> 'a m
+  val (>*) : 'a m -> 'a m -> 'a m
 end
 
 module Make(A : Base) =
 struct
   include A
 
-  let lift1 f x     = ap (return f) x
-  let lift2 f x y   = ap (lift1 f x) y
-  let lift3 f x y z = ap (lift2 f x y) z
+  let lift1 f x     = return f    <*> x
+  let lift2 f x y   = lift1 f x   <*> y
+  let lift3 f x y z = lift2 f x y <*> z
+
+  let (<*) x y = lift2 (fun x _ -> x) x y
+  let (>*) x y = lift2 (fun _ y -> y) x y
 
   let sequence ms = List.fold_left (lift2 (fun xs x -> x :: xs))
     (return []) ms
@@ -65,5 +71,5 @@ struct
   module A = Make(A)
   type 'a m = 'a Inner.m A.m
   let return x = A.return (Inner.return x)
-  let ap f x = A.lift2 Inner.ap f x
+  let (<*>) f x = A.lift2 Inner.(<*>) f x
 end

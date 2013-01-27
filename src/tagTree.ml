@@ -1,7 +1,7 @@
 type ('tag,'a) node =
     Node of 'a * ('tag * ('tag,'a) node) LazyList.t
 
-module type Tree = 
+module type Tree =
 sig
   type tag
   include Monad.BaseCollectionM
@@ -29,7 +29,7 @@ struct
 
   let root (Node (x, _))      = x
   let children (Node (_, cs)) = cs
-    
+
   let return x = Node (singleton x, nil)
 
   let rec to_list (Node (x, cs)) =
@@ -39,8 +39,8 @@ struct
     if is_empty (drop 1 bs) then
       Node (bs, nil)
     else Node (nil, (map (fun b -> (b,return b)) bs))
-      
-  let zero () = Node (nil, nil)    
+
+  let zero () = Node (nil, nil)
 
   let rec null (Node (xs, cs)) =
     is_empty xs && all null (map snd cs)
@@ -49,9 +49,9 @@ struct
     let f (_,t) = count t in
     length xs + fold_left (+) 0 (map f cs)
 
-  (* Helper functions for join and plus. *)    
+  (* Helper functions for join and plus. *)
   let map1 f xs = map (fun (x,y) -> (f x, y)) xs
-  let map2 f xs = map (fun (x,y) -> (x, f y)) xs  
+  let map2 f xs = map (fun (x,y) -> (x, f y)) xs
 
   let rec map_tree f (Node (xs,cs)) =
     Node (f xs, map2 (map_tree f) cs)
@@ -60,7 +60,7 @@ struct
   let pinch xs =
     let rec loop preds xs =
       lazy
-	(match next xs with
+        (match next xs with
             Nil -> Nil
           | Cons (x',xs') ->
             Cons ((x', preds ^@^ xs'), loop (preds ^@^ singleton x') xs'))
@@ -74,17 +74,17 @@ struct
 
      1) If T' has a subtree t' whose tag appears on a containing tree
      t'', then we replace t'' with f(t'') + t' where f(t'') is the
-     result of deleting t' and its parent from t''. 
+     result of deleting t' and its parent from t''.
 
      2) If T' has a subtree t' whose tag is an ancestor's sibling,
      then t' is deleted.
   *)
-  let combine, simplify = 
+  let combine, simplify =
     let dest_tree tree =
       lazy (let Node (root, _) = Lazy.force tree in next root),
       lazy (let Node (_, cs)   = Lazy.force tree in next cs) in
-    
-    let rec simp_children ancestor_tags uncle_tags tagged_xs = lazy 
+
+    let rec simp_children ancestor_tags uncle_tags tagged_xs = lazy
       (let tagged_xs =
          filter (fun (tag, _) ->
            not (mem ~cmp:Tag.cmp tag uncle_tags))
@@ -92,19 +92,19 @@ struct
        let weaks =
          filter (fun (tag, _) -> mem ~cmp:Tag.cmp tag ancestor_tags)
            tagged_xs in
-       if is_empty weaks then 
+       if is_empty weaks then
          Node (nil, tagged_xs)
        else
          fold_right1 (comb (^@^) ancestor_tags uncle_tags)
            (map snd weaks))
-      
+
     and simplify ancestor_tags uncle_tags (Node (x, tagged_xs)) =
-      let x', tagged_xs' = dest_tree 
+      let x', tagged_xs' = dest_tree
         (simp_children ancestor_tags uncle_tags tagged_xs)
-      in Node (x ^@^ x', 
+      in Node (x ^@^ x',
                map2 (simplify ancestor_tags uncle_tags)
                  tagged_xs')
-      
+
     and comb : 'a 'c. ('a LazyList.t -> 'b LazyList.t -> 'c) ->
     Tag.t LazyList.t ->
     Tag.t LazyList.t ->
@@ -115,7 +115,7 @@ struct
       let y = lazy (let Node (y, _) = Lazy.force tree_y in next y) in
       let tagged_ys =
         lazy (let Node (_,tagged_ys) = Lazy.force tree_y
-              in next tagged_ys) 
+              in next tagged_ys)
       in Node (f x y,
                lazy
                  (if is_empty tagged_xs then
@@ -133,11 +133,11 @@ struct
                                (simp_children
                                   ancestor_tags uncle_tags tagged_ys)))
                           (with_sibling_tags tagged_xs))))
-      
+
     in (fun f tree_x tree_y -> comb f nil nil tree_x tree_y), simplify
 
   let compose f g x = f (g x)
-    
+
   let combine_down f tf tx =
     let rec push_down (Node ((xs, ys, zs), cs)) =
       Node ((xs, ys, zs),
@@ -161,10 +161,10 @@ struct
                      (join c))
                    (pinch cs))))
     in join (map_tree (fun xs -> fold_right lplus (zero ()) (map f xs)) t)
-    
+
   (* let bind t f = *)
   (*   map_tree (concat_map root) (map_tree (map f) t) *)
-    
+
   (* let bind t f = *)
   (*   let join t = *)
   (*     let only_child tag c = *)
@@ -208,26 +208,26 @@ struct
       Node (LazyList.difference p xs ys,
             map2
               (fun c -> map_tree (fun xs' -> difference p xs' ys)
-        	(filter_down c)) cs) in
+                (filter_down c)) cs) in
     filter_down (combine (fun xs ys -> xs, ys) t1 (lazy t2))
 
   let rec nub p (Node (xs, cs)) =
     let xs' = LazyList.nub p xs in
     Node (xs', map2 (compose
-		       (map_tree (fun ys -> LazyList.difference p ys xs'))
-		       (nub p)) cs)
+                       (map_tree (fun ys -> LazyList.difference p ys xs'))
+                       (nub p)) cs)
 
   let rec maxima p (Node (xs, cs)) =
     let xs' = LazyList.maxima p xs in
     Node (xs', map2 (compose
-		       (map_tree (fun ys -> LazyList.difference p ys xs'))
-		       (maxima p)) cs)
+                       (map_tree (fun ys -> LazyList.difference p ys xs'))
+                       (maxima p)) cs)
 
-  let rec unique p (Node (xs, cs)) =
-    let xs' = LazyList.unique p xs in
+  let rec unique ?(cmp = (=)) (Node (xs, cs)) =
+    let xs' = LazyList.unique ~cmp xs in
     Node (xs', map2 (compose
-		       (map_tree (fun ys -> LazyList.difference p ys xs'))
-		       (unique p)) cs)
+                       (map_tree (fun ys -> LazyList.difference cmp ys xs'))
+                       (unique ~cmp)) cs)
 
   let rec with_tags (Node (xs, cs)) =
     Node (map (fun x -> [], x) xs,
@@ -239,7 +239,7 @@ struct
     ^@^ concat_map (fun (_, c) -> to_list c) cs
 
   let rec collapse t = Node (to_list t, nil)
-      
+
   let print p t =
     let rec print i (Node (xs, cs)) =
       let indent () =
@@ -264,5 +264,5 @@ struct
     if is_forced cs then
       Node (x, map2 to_forced cs)
     else Node (x, nil)
-      
+
 end

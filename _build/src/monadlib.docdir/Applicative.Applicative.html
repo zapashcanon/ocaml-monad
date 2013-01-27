@@ -32,6 +32,13 @@ We can lift functions of arbitrary arity.<br>
 We can send a list of computations to a computation of a list.<br>
 </div>
 <pre><span id="VALmap_a"><span class="keyword">val</span> map_a</span> : <code class="type">('a -> 'b m) -> 'a list -> 'b list m</code></pre><div class="info">
-We can lift map. A function which computes <code class="code">'b</code> from <code class="code">'a</code> can compute a list of <code class="code">'b</code> from a list of <code class="code">'a</code>.<br>
+We can lift map. A function which computes <code class="code">'b</code> from <code class="code">'a</code> can compute a
+  list of <code class="code">'b</code> from a list of <code class="code">'a</code>.<br>
+</div>
+<pre><span id="VAL( <* )"><span class="keyword">val</span> ( &lt;* )</span> : <code class="type">'a m -> 'a m -> 'a m</code></pre><div class="info">
+Sequence two computations, returning the result of the left one.<br>
+</div>
+<pre><span id="VAL( >* )"><span class="keyword">val</span> ( &gt;* )</span> : <code class="type">'a m -> 'a m -> 'a m</code></pre><div class="info">
+Sequence two computations, returning the result of the right one.<br>
 </div>
 </body></html>

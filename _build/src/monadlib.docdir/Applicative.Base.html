@@ -29,7 +29,7 @@ Applicative functors<br>
 <pre><span id="VALreturn"><span class="keyword">val</span> return</span> : <code class="type">'a -> 'a <a href="Applicative.Base.html#TYPEm">m</a></code></pre><div class="info">
 The function <code class="code">return</code> is much the same as that for the monad. We just lift a single value.<br>
 </div>
-<pre><span id="VALap"><span class="keyword">val</span> ap</span> : <code class="type">('a -> 'b) <a href="Applicative.Base.html#TYPEm">m</a> -><br>       'a <a href="Applicative.Base.html#TYPEm">m</a> -> 'b <a href="Applicative.Base.html#TYPEm">m</a></code></pre><div class="info">
-The function <code class="code">ap</code> sends a computed function to a function of computations.<br>
+<pre><span id="VAL(<*>)"><span class="keyword">val</span> (&lt;*&gt;)</span> : <code class="type">('a -> 'b) <a href="Applicative.Base.html#TYPEm">m</a> -><br>       'a <a href="Applicative.Base.html#TYPEm">m</a> -> 'b <a href="Applicative.Base.html#TYPEm">m</a></code></pre><div class="info">
+The function <code class="code">(&lt;*&gt;)</code> sends a computed function to a function of computations. This function can be defined from <code class="code">bind</code> and <code class="code">return</code>, but not vice versa.<br>
 </div>
 </body></html>

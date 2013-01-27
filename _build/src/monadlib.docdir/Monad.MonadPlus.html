@@ -41,6 +41,9 @@ Turn a computation of a list into a computation of its possible values.<br>
 <pre><span id="VALmsum"><span class="keyword">val</span> msum</span> : <code class="type">'a m list -> 'a m</code></pre><div class="info">
 fold the <code class="code">plus</code> across a list.<br>
 </div>
+<pre><span id="VALguard"><span class="keyword">val</span> guard</span> : <code class="type">bool -> 'a m -> 'a m</code></pre><div class="info">
+Run a computation if a given condition holds, otherwise fail.<br>
+</div>
 <pre><span id="VALtranspose"><span class="keyword">val</span> transpose</span> : <code class="type">'a list m -> 'a m list</code></pre><div class="info">
 Generalises matrix transposition: given a computation of lists, return
   a list containing, in order: all possible first elements; all possible

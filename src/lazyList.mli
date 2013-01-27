@@ -136,7 +136,7 @@ val mem : 'a -> 'a t -> bool
 val subset : ?cmp:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
 (** Remove duplicates from a list. *)  
-val unique : ('a -> 'a -> bool) -> 'a t -> 'a t
+val unique : ?cmp:('a -> 'a -> bool) -> 'a t -> 'a t
 
 val mem : ?cmp:('a -> 'a -> bool) -> 'a -> 'a t -> bool
   

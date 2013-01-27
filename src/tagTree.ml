@@ -149,7 +149,7 @@ struct
     map_tree (fun (_,_,x) -> x)
       (push_down (combine (fun xs ys -> xs, ys, f xs ys) tf tx))
 
-  let ap ft xt = combine_down apl ft (lazy xt)
+  let (<*>) ft xt = combine_down apl ft (lazy xt)
 
   let lplus t t' = combine (^@^) t t'
 

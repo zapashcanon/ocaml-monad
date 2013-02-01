@@ -4,7 +4,7 @@ ocaml-monad
 Description
 -----------
 
-A starter monad library in Ocaml. Monad library functions are generated from implementations of BatInterfaces.Monad. Generated documentation can be found at chattered.github.com/ocaml-monad.
+A starter monad library in Ocaml. Monad library functions are generated from implementations of BatInterfaces.Monad. Generated documentation can be found at http://chattered.github.com/ocaml-monad.
 
 We support monads with the additional "plus" structure, and provide a lazy variant useful for monads such as LazyList. 
 

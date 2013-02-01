@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Monad.Option.html">
+<link rel="next" href="Monad.MakeReader.html">
+<link rel="Up" href="Monad.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="LazyList" rel="Chapter" href="LazyList.html">
+<link title="TagTree" rel="Chapter" href="TagTree.html">
+<link title="Monad" rel="Chapter" href="Monad.html">
+<link title="Applicative" rel="Chapter" href="Applicative.html"><title>Monad.Continuation</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Monad.Option.html" title="Monad.Option">Previous</a>
+&nbsp;<a class="up" href="Monad.html" title="Monad">Up</a>
+&nbsp;<a class="post" href="Monad.MakeReader.html" title="Monad.MakeReader">Next</a>
+</div>
+<h1>Functor <a href="type_Monad.Continuation.html">Monad.Continuation</a></h1>
+<pre><span class="keyword">module</span> Continuation: <div class="sig_block"><code class="code">functor (</code><code class="code">T</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEr"><span class="keyword">type</span> <code class="type"></code>r</span> </pre>
+
+</div><code class="code">end</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Monad.Continuation.html">..</a> <code class="code">end</code></div></pre><div class="info">
+The continuation monad. I'm told that it is a good idea to be afraid of
+    this one, and generally avoid it! But for the persistent:
+<p>
+
+    A continuation of type 'a has type
+    <code class="code">('a -&gt; 'r) -&gt; 'r</code>
+    The first argument to this continuation is a final value of type 'r which
+    depends on some intermediate value of type 'a. In other words, we can
+    understand the continuation as a result of type 'r which depends on the <i>    future</i> of an intermediate value.
+<p>
+
+    The function <code class="code">return</code> just <i>throws</i> its return value to the future in
+    order to produce the final result. The <code class="code">bind</code> intercedes in the future,
+    inserting a computation.
+<p>
+
+    Things get bizarre with the function call-with-current-continuation. This
+    allows one to effectively reflect into one's own future. That is, callCC is
+    a computation which depends on another computation taking the future as a
+    first-class value. One can store this future, and at any time, throw it a
+    return value to reinstate it.
+<p>
+
+    If you are into the Curry-Howard Isomorphism,
+    call-with-current-continuation has a type which corresponds to a law of
+    classical logic (Pierce's Law). Writing your code in the continuation
+    monad corresponds to embedding classical logic intuitionistically. Allowing
+    callCC corresponds to assuming a classical hypothesis. An immediate
+    corollary of this is that callCC will allow you to write non-terminating
+    programs.<br>
+</div>
+<table border="0" cellpadding="3" width="100%">
+<tr>
+<td align="left" valign="top" width="1%%"><b>Parameters: </b></td>
+<td>
+<table class="paramstable">
+<tr>
+<td align="center" valign="top" width="15%">
+<code>T</code></td>
+<td align="center" valign="top">:</td>
+<td><code class="type">sig type r end</code>
+</table>
+</td>
+</tr>
+</table>
+<hr width="100%">
+<pre><span class="keyword">include</span> BatInterfaces.Monad</pre>
+<pre><span id="VALcallCC"><span class="keyword">val</span> callCC</span> : <code class="type">(('a -> 'r m) -> 'a m) -> 'a m</code></pre></body></html>

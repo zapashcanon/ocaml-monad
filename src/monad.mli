@@ -442,9 +442,7 @@ module Option : BasePlus with type 'a m = 'a option
     call-with-current-continuation has a type which corresponds to a law of
     classical logic (Pierce's Law). Writing your code in the continuation
     monad corresponds to embedding classical logic intuitionistically. Allowing
-    callCC corresponds to assuming a classical hypothesis. An immediate
-    corollary of this is that callCC will allow you to write non-terminating
-    programs.
+    callCC corresponds to assuming a classical hypothesis. 
 *)
 module Continuation(T : sig type r end) :
 sig

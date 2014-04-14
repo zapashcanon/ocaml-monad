@@ -2,43 +2,26 @@
 
     {b Introduction}
 
-    Monads are a popular concept in Haskell and controversial just about
-    everywhere else on the planet! They have been thought of by some in the
-    Ocaml community as a "design pattern" (see the documentation for
-    BatMonad), and a nice way to abstract over resource manipulation. My
-    favourite example in Ocaml is the lwt library.
+    Monads are often defined narrowly in terms of a bind and return function. This
+    misses the {i abstraction}, which is to be found in the libraries which give us
+    general functions that apply to {i all} monads. For example, if we aren't
+    automatically deriving a {! Monad.join} function for all of our monads, then
+    we've missed something important.
 
-    But I find that, in Ocaml, "monads" are typically seen rather narrowly in
-    terms of a bind and return function. Personally, I think monads are bigger
-    than that. They are an {i abstraction}, and the meaning of that abstraction
-    is to be found in libraries which give you general functions that apply to
-    {i all} monads. To make the point concretely, if we aren't automatically
-    deriving a {! Monad.join} function for all of our monads, then we've missed
-    something important.
-
-    In other words, I want to say that monads as an abstraction are defined by
-    an abstract monad {i library}. Such a library is the purpose of this
-    module.
-
-    I recommend checking out the the types in this module. I find they say a {i
-    lot} about the meaning of the various functions.
-
-    {b A rambling note on terminology }
+    {b Terminology }
 
     There's some confusing terminology when it comes to monads, which I'll try
     to clarify for the purposes of the documentation.
 
-    Now I'm no category theorist, but if I were to try to get technical, I'd
-    say that a monad is a three-tuple: a type-constructor, and two
-    functions. So, for instance, the list monad can be defined by three things:
+    Formally, a monad is a three-tuple: a type-constructor, and two functions. So,
+    for instance, the list monad can be defined by three things:
 
-    - the constructor [list] which appears in type expressions such as ['a list];
-    - the function [return];
-    - the function [bind].
+    - the constructor [list] which appears in type expressions such as ['a list]; the
+    - function [return]; the function [bind].
 
-    The fact that we have a type-constructor here explains why a monad cannot
-    be represented nicely by a simple tuple. We need to package them into a
-    module instead.
+    The fact that monads abstract over a type-constructor explains why a monad cannot
+    be represented nicely by a simple tuple. We need to package them into a module
+    instead.
 
     Terminology now gets a bit hairy, because as pointed out by
     {{:http://blog.plover.com/prog/haskell/monad-terminology.html} Mark
@@ -53,10 +36,12 @@
     [list] monad which returns 1, 2 or 3." I will also read values of type [m
     ()] as "the computation in the [m] monad which returns nothing."
 
-    I'm not convinced that "computation" is the best analogy for what monads
-    are about, and I worry that if this metaphor gets taken too seriously,
-    we might miss some interesting monads. For now, I'm just treating it
-    as a useful metaphor for writing this documentation.
+    I'm not convinced that "computation" is the right word for what monads are about,
+    and I worry that if this metaphor gets taken too seriously, we'll miss some
+    interesting monads. See
+    {{:http://www.haskellforall.com/2012/06/you-could-have-invented-free-monads.html}
+    Why Free Monads matter}, for an example. For the purposes of this documentation,
+    the metaphor is just a convenience.
 
     @author Phil Scott
 *)

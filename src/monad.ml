@@ -290,7 +290,7 @@ struct
       M.lift1 BatList.concat
         (M.map_a f x))
 end
-  
+
 module LazyListM =
 struct
   type 'a m = 'a LazyList.t
@@ -419,7 +419,7 @@ struct
   let read     e = e
   let run e x    = x e
 end
-  
+
 module type Writer =
 sig
   type t

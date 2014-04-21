@@ -59,6 +59,9 @@ sig
   val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
+  (** Alias for lift1. *)
+  val (<$>) : ('a -> 'b) -> 'a m -> 'b m
+
   (** We can send a list of computations to a computation of a list. *)
   val sequence : 'a m list -> 'a list m
 
@@ -67,10 +70,10 @@ sig
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
 
   (** Sequence two computations, returning the result of the left one. *)
-  val (<*) : 'a m -> 'a m -> 'a m
+  val (<*) : 'a m -> 'b m -> 'a m
 
   (** Sequence two computations, returning the result of the right one. *)
-  val (>*) : 'a m -> 'a m -> 'a m
+  val (>*) : 'a m -> 'b m -> 'b m
 
 end
 

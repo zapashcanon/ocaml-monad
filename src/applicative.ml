@@ -42,26 +42,31 @@ sig
   val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
+  val (<$>) : ('a -> 'b) -> 'a m -> 'b m
+
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
 
-  val (<*) : 'a m -> 'a m -> 'a m
-  val (>*) : 'a m -> 'a m -> 'a m
+  val (<*) : 'a m -> 'b m -> 'a m
+  val (>*) : 'a m -> 'b m -> 'b m
 end
 
 module Make(A : Base) =
 struct
   include A
 
-  let lift1 f x     = return f    <*> x
-  let lift2 f x y   = lift1 f x   <*> y
-  let lift3 f x y z = lift2 f x y <*> z
+  let (<$>) f x = return f <*> x
+
+  let lift1 f x     = f <$> x
+  let lift2 f x y   = f <$> x <*> y
+  let lift3 f x y z = f <$> x <*> y <*> z
 
   let (<*) x y = lift2 (fun x _ -> x) x y
   let (>*) x y = lift2 (fun _ y -> y) x y
 
-  let sequence ms = List.fold_left (lift2 (fun xs x -> x :: xs))
-    (return []) ms
+  let rec sequence = function
+    | []    -> return []
+    | m::ms -> lift2 (fun x xs -> x :: xs) m (sequence ms)
 
   let map_a f xs = sequence (List.map f xs)
 end

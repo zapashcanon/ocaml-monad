@@ -58,6 +58,7 @@ sig
   val lift1 : ('a -> 'b) -> 'a m -> 'b m
   val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
+  val lift4 : ('a -> 'b -> 'c -> 'd -> 'e) -> 'a m -> 'b m -> 'c m -> 'd m -> 'e m
 
   (** Alias for lift1. *)
   val (<$>) : ('a -> 'b) -> 'a m -> 'b m

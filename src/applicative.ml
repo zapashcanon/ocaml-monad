@@ -41,6 +41,7 @@ sig
   val lift1 : ('a -> 'b) -> 'a m -> 'b m
   val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
+  val lift4 : ('a -> 'b -> 'c -> 'd -> 'e) -> 'a m -> 'b m -> 'c m -> 'd m -> 'e m
 
   val (<$>) : ('a -> 'b) -> 'a m -> 'b m
 
@@ -57,9 +58,10 @@ struct
 
   let (<$>) f x = return f <*> x
 
-  let lift1 f x     = f <$> x
-  let lift2 f x y   = f <$> x <*> y
-  let lift3 f x y z = f <$> x <*> y <*> z
+  let lift1 f x       = f <$> x
+  let lift2 f x y     = f <$> x <*> y
+  let lift3 f x y z   = f <$> x <*> y <*> z
+  let lift4 f x y z w = f <$> x <*> y <*> z <*> w
 
   let (<*) x y = lift2 (fun x _ -> x) x y
   let (>*) x y = lift2 (fun _ y -> y) x y

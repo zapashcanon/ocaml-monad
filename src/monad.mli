@@ -485,7 +485,7 @@ sig
 end
 
 (** {6 Transformers} *)
-(** Monads support a certain amount of composition, allowing one create a
+(** Monads support a certain amount of composition, allowing one to create a
     single monad which combines the properties of other monads. For instance,
     we might want a monad which reads from an environment and writes to a
     log. We can do this by transforming the reader monad with the writer

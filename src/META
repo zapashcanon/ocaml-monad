@@ -1,9 +1,9 @@
 # OASIS_START
-# DO NOT EDIT (digest: 51009967e8d37148486d7754bbe66197)
+# DO NOT EDIT (digest: 74ff08c66bbedea2952fc270b0b49e44)
 version = "0.1"
 description =
 "A starter library for monads, with transformers and applicatives."
-requires = "batteries"
+requires = "batteries threads"
 archive(byte) = "monadlib.cma"
 archive(byte, plugin) = "monadlib.cma"
 archive(native) = "monadlib.cmxa"

@@ -1,37 +1,8 @@
-module Ll = LazyList
-let (^:^) = Ll.(^:^)
-
 module type Base =
 sig
   type 'a m
   val return : 'a -> 'a m
   val (<*>) : ('a -> 'b) m -> 'a m -> 'b m
-end
-
-(** Applicatives with additional monoid structure. *)
-module type BasePlus =
-sig
-  include Base
-  val zero : unit -> 'a m
-  val plus : 'a m -> 'a m -> 'a m
-
-  (** null x implies that x is zero. If you do not want to or cannot
-      answer whether a given x is zero, then null x should be false. *)
-  val null : 'a m -> bool
-end
-
-(** LazyPlus provides a plus operation which is non-strict in its second
-    argument. *)
-module type BaseLazyPlus =
-sig
-  include Base
-  val zero  : unit -> 'a m
-
-  val lplus : 'a m -> 'a m Lazy.t -> 'a m
-
-  (** null x implies that x is zero. If you do not want to or cannot
-      answer whether a given x is zero, then null x should be false. *)
-  val null  : 'a m -> bool
 end
 
 module type Applicative =

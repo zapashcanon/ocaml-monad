@@ -26,6 +26,9 @@ sig
   val (>>=)    : 'a m -> ('a -> 'b m) -> 'b m
   val join     : 'a m m -> 'a m
   val filter_m : ('a -> bool m) -> 'a list -> 'a list m
+  val onlyif : bool -> unit m -> unit m
+  val unless : bool -> unit m -> unit m
+  val ignore : 'a m -> unit m
 end
 
 module type MonadPlus =
@@ -42,8 +45,8 @@ end
 
 module type LazyPlus =
 sig
-  include MonadPlus
-  val lplus      : 'a m -> 'a m Lazy.t -> 'a m
+  include BaseLazyPlus
+  include MonadPlus with type 'a m := 'a m
   val of_llist   : 'a LazyList.t -> 'a m
   val lsum       : 'a LazyList.t m -> 'a m
   val lmsum      : 'a m LazyList.t -> 'a m
@@ -76,6 +79,10 @@ struct
                            fun b -> m >>=
                                fun ys -> return (if b then (x::ys) else ys)) xs in
     loop (return [])
+
+  let ignore m   = lift1 (fun _ -> ()) m
+  let onlyif b m = if b then m else return ()
+  let unless b m = if b then return () else m
 end
 
 module MakePlus(M : BasePlus) =
@@ -137,55 +144,61 @@ struct
   module ML = MakeLazyPlus(M)
 
   type 'a t = 'a ML.m LazyList.node_t
-  type 'a m = 'a t Lazy.t
-
-  let zero () = Ll.nil
-
-  let rec lplus xss yss =
-    let hd_yss = lazy (match Ll.next (Lazy.force yss) with
-        Ll.Nil -> ML.zero ()
-      | Ll.Cons (ys,_) -> ys)
-    and tl_yss = lazy (match Ll.next (Lazy.force yss) with
-        Ll.Nil -> Ll.nil
-      | Ll.Cons (_,yss) -> yss)
-    in lazy (match Ll.next xss with
-        Ll.Nil -> Ll.next (Lazy.force yss)
-      | Ll.Cons (xs,xss) ->
-        Ll.Cons (ML.lplus xs hd_yss, lplus xss tl_yss))
-
-  let plus xss yss = lplus xss (lazy yss)
-
-  let null = Ll.is_empty
-
-  let return x  = Ll.singleton (ML.return x)
 
   let delay xs = M.zero () ^:^ xs
 
-  let bind xs f =
-    let join xs =
-      let rec shift xs =
-        lazy (match Ll.next xs with
-            Ll.Nil -> Ll.Nil
-          | Ll.Cons (x', xs') ->
-            Ll.next (plus
-                       (Ll.map ML.join (ML.ltranspose x'))
-                       (delay (shift xs')))) in
-      shift xs
-    in join (Ll.map (ML.lift1 f) xs)
+  module Base = struct
+    type 'a m = 'a t Lazy.t
 
-  let (<*>) fs xs =
-    let rec shift fs =
-      lazy (match Ll.next fs with
-          Ll.Nil -> Ll.Nil
-        | Ll.Cons (f', fs') ->
-          Ll.next
-            (* Without the null check, we'll have a space leak as
+    let zero () = Ll.nil
+
+    let rec lplus xss yss =
+      let hd_yss = lazy (match Ll.next (Lazy.force yss) with
+                           Ll.Nil -> ML.zero ()
+                         | Ll.Cons (ys,_) -> ys)
+      and tl_yss = lazy (match Ll.next (Lazy.force yss) with
+                           Ll.Nil -> Ll.nil
+                         | Ll.Cons (_,yss) -> yss)
+      in lazy (match Ll.next xss with
+                 Ll.Nil -> Ll.next (Lazy.force yss)
+               | Ll.Cons (xs,xss) ->
+                  Ll.Cons (ML.lplus xs hd_yss, lplus xss tl_yss))
+
+    let plus xss yss = lplus xss (lazy yss)
+
+    let null = Ll.is_empty
+
+    let return x  = Ll.singleton (ML.return x)
+
+    let bind xs f =
+      let join xs =
+        let rec shift xs =
+          lazy (match Ll.next xs with
+                  Ll.Nil -> Ll.Nil
+                | Ll.Cons (x', xs') ->
+                   Ll.next (plus
+                              (Ll.map ML.join (ML.ltranspose x'))
+                              (delay (shift xs')))) in
+        shift xs
+      in join (Ll.map (ML.lift1 f) xs)
+
+    let (<*>) fs xs =
+      let rec shift fs =
+        lazy (match Ll.next fs with
+                Ll.Nil -> Ll.Nil
+              | Ll.Cons (f', fs') ->
+                 Ll.next
+                   (* Without the null check, we'll have a space leak as
                the empty generation is uselessly applied across xs. *)
-            (if ML.null f' then delay (shift fs')
-             else plus
-                (Ll.map (M.(<*>) f') xs)
-                (delay (shift fs')))) in
-    shift fs
+                   (if ML.null f' then delay (shift fs')
+                    else plus
+                           (Ll.map (M.(<*>) f') xs)
+                           (delay (shift fs')))) in
+      shift fs
+  end
+
+  include MakeLazyPlus(Base)
+  include (Applicative.Make(Base) : Applicative.Applicative with type 'a m := 'a m)
 
   let to_depth n = LazyList.take n
 
@@ -206,7 +219,7 @@ end
 module type Stream =
 sig
   type 'a t
-  include BaseLazyPlus with type 'a m = 'a t Lazy.t
+  include LazyPlus with type 'a m = 'a t Lazy.t
   val iterate : ('a m -> 'a m) -> 'a m -> 'a m
   val delay : 'a m -> 'a m
   val to_depth : int -> 'a m -> 'a m
@@ -251,102 +264,116 @@ struct
 end
 
 module LazyM =
-struct
-  type 'a m = 'a Lazy.t
-  let return x = lazy x
-  let bind x f =
-    lazy (Lazy.force (f (Lazy.force x)))
-end
+  Make(struct
+        type 'a m = 'a Lazy.t
+        let return x = lazy x
+        let bind x f =
+          lazy (Lazy.force (f (Lazy.force x)))
+      end)
 
 module LazyT(M : BatInterfaces.Monad) =
 struct
-  module M  = Make(M)
-  type 'a m = 'a Lazy.t M.m
-  let return x = M.return (lazy x)
-  let bind x f =
-    M.bind x (fun x ->
-      f (Lazy.force x))
+  module M = Make(M)
+  include Make(struct
+                type 'a m = 'a Lazy.t M.m
+                let return x = M.return (lazy x)
+                let bind x f =
+                  M.bind x (fun x ->
+                            f (Lazy.force x))
+              end)
+  let lift x = M.lift1 (fun x -> lazy x) x
 end
 
 module List =
-struct
-  type 'a m = 'a list
-  let return x  = [x]
-  let bind xs f = BatList.concat (List.map f xs)
-  let zero () = []
-  let plus xs ys = xs @ ys
-  let null = function
-      [] -> true
-    | _  -> false
-end
+  MakePlus(struct
+            type 'a m = 'a list
+            let return x  = [x]
+            let bind xs f = BatList.concat (List.map f xs)
+            let zero () = []
+            let plus xs ys = xs @ ys
+            let null = function
+                [] -> true
+              | _  -> false
+          end)
 
 module ListT(M : BatInterfaces.Monad) =
 struct
   module M = Make(M)
-  type 'a m = 'a list M.m
-  let return x  = M.return [x]
-  let bind xs f =
-    M.bind xs (fun x ->
-      M.lift1 BatList.concat
-        (M.map_a f x))
+  include Make(struct
+                type 'a m = 'a list M.m
+                let return x  = M.return [x]
+                let bind xs f =
+                  M.bind xs (fun x ->
+                             M.lift1 BatList.concat
+                                     (M.map_a f x))
+              end)
+  let lift x = M.lift1 (fun x -> [x]) x
 end
 
 module LazyListM =
 struct
-  type 'a m = 'a LazyList.t
-  let return x  = Ll.singleton x
-  let bind xs f = Ll.concat (Ll.map f xs)
-  let zero () = Ll.nil
-  let rec lplus xs ys =
-    lazy (match Ll.next xs with
-        Ll.Nil        -> Ll.next (Lazy.force ys)
-      | Ll.Cons(x,xs) -> Ll.Cons(x, lplus xs ys))
-  let null = Ll.is_empty
+  include MakeLazyPlus(struct
+                        type 'a m = 'a LazyList.t
+                        let return x  = Ll.singleton x
+                        let bind xs f = Ll.concat (Ll.map f xs)
+                        let zero () = Ll.nil
+                        let rec lplus xs ys =
+                          lazy (match Ll.next xs with
+                                  Ll.Nil        -> Ll.next (Lazy.force ys)
+                                | Ll.Cons(x,xs) -> Ll.Cons(x, lplus xs ys))
+                        let null = Ll.is_empty
+                      end)
 end
 
 module Option =
-struct
-  type 'a m = 'a option
-  let return x  = Some x
-  let bind x f  = match x with
-      None   -> None
-    | Some y -> f y
-  let zero ()   = None
-  let plus x y  =
-    match x,y with
-        None, x        -> x
-      | x, None        -> x
-      | Some x, Some _ -> Some x
-  let null      = BatOption.is_none
-end
+  MakePlus(struct
+            type 'a m = 'a option
+            let return x  = Some x
+            let bind x f  = match x with
+                None   -> None
+              | Some y -> f y
+            let zero ()   = None
+            let plus x y  =
+              match x,y with
+                None, x        -> x
+              | x, None        -> x
+              | Some x, Some _ -> Some x
+            let null      = BatOption.is_none
+          end)
 
 module OptionT(M : BatInterfaces.Monad) =
 struct
-  type 'a m = 'a option M.m
-  let return x  = M.return (Some x)
-  let bind xs f =
-    M.bind xs
-      (function
-      None   -> M.return None
-        | Some x -> f x)
+  module M = Make(M)
+  include Make(struct
+                type 'a m = 'a option M.m
+                let return x  = M.return (Some x)
+                let bind xs f =
+                      M.bind xs
+                             (function
+                                 None   -> M.return None
+                               | Some x -> f x)
+              end)
+  let lift x = M.lift1 (fun x -> Some x) x
 end
 
 module Error(E : sig type e val defaultError : e end) =
 struct
-  type 'a m = Error    of E.e
+  type 'a err = Error  of E.e
               | Result of 'a
-
-  let return x = Result x
-  let bind x f = match x with
-      Error  e -> Error e
-    | Result x -> f x
-  let zero ()  = Error E.defaultError
-  let plus x y = match x with
-      Error  e -> y
-    | Result x -> Result x
-  let null x   = match x with
-      Error _  -> true
-    | _        -> false
+  include MakePlus(struct
+                    type 'a m = 'a err
+                    let return x = Result x
+                    let bind x f = match x with
+                        Error  e -> Error e
+                      | Result x -> f x
+                    let zero ()  = Error E.defaultError
+                    let plus x y = match x with
+                        Error  e -> y
+                      | Result x -> Result x
+                    let null x   = match x with
+                        Error _  -> true
+                      | _        -> false
+                  end)
 
   let throw e = Error e
 
@@ -356,41 +383,50 @@ struct
     | Result x -> return x
 end
 
-module Continuation(T : sig type r end) =
-struct
-  type 'a m = ('a -> T.r) -> T.r
+module Continuation(T : sig type r end) = struct
+  include Make(struct
+                type 'a m = ('a -> T.r) -> T.r
 
-  let return x k = k x
-  let bind c f k =
-    c (fun x -> (f x) k)
-
+                let return x k = k x
+                let bind c f k =
+                  c (fun x -> (f x) k)
+              end)
   let callCC kk k =
     kk (fun x -> fun _ -> k x) k
 end
 
+
 module State(T : sig type s end) =
 struct
-  type 'a m = T.s -> (T.s * 'a)
-  let return x s  = (s, x)
-  let bind xf f s =
-    let s',x = xf s in
-    f x s'
+  include Make(struct
+                type 'a m = T.s -> (T.s * 'a)
+                let return x s  = (s, x)
+                let bind xf f s =
+                  let s',x = xf s in
+                  f x s'
+              end)
   let read s    = (s,s)
   let write x s = (x,())
   let run x s   = x s
+  let eval x s  = snd (x s)
   let modify f  = bind read (fun s -> write (f s))
 end
 
 module StateT(T : sig type s end)(M : BatInterfaces.Monad) =
 struct
-  type 'a m = T.s -> (T.s * 'a) M.m
-  let return x s  = M.return (s, x)
-  let bind xf f s =
-    M.bind (xf s) (fun (s',x) -> (f x) s')
+  module M = Make(M)
+  include Make(struct
+                type 'a m = T.s -> (T.s * 'a) M.m
+                let return x s  = M.return (s, x)
+                let bind xf f s =
+                  M.bind (xf s) (fun (s',x) -> (f x) s')
+              end)
   let read  s   = M.return (s,s)
   let write x s = M.return (x,())
   let modify f  = bind read (fun s -> write (f s))
   let run   x s = x s
+  let eval  x s = M.lift1 snd (x s)
+  let lift x s  = M.lift1 (fun x -> (s,x)) x
 end
 
 module type Monoid =
@@ -400,70 +436,54 @@ sig
   val plus : t -> t -> t
 end
 
-module type Reader =
-sig
-  type t
-  include BatInterfaces.Monad
-
-  val read : t m
-  val run  : t -> 'a m -> 'a
-end
-
-module MakeReader(M : sig type t end) =
-struct
-  include M
-  type 'a m = M.t -> 'a
-  let return x _ = x
-  let bind r f e =
-    f (r e) e
+module Reader(M : sig type t end) = struct
+  include Make(struct
+                type 'a m = M.t -> 'a
+                let return x _ = x
+                let bind r f e =
+                  f (r e) e
+              end)
   let read     e = e
   let run e x    = x e
 end
 
-module type Writer =
-sig
-  type t
-  include BatInterfaces.Monad
-  val listen : 'a m -> (t * 'a) m
-  val run   : 'a m -> t * 'a
-  val write : t -> unit m
-end
-
-module MakeWriter(M : Monoid) =
-struct
-  include M
-  type 'a m = M.t * 'a
-  let return x     = M.zero (), x
-  let bind (m,x) f =
-    let m',y = f x in
-    M.plus m m', y
+module Writer(M : Monoid) = struct
+  include Make(struct
+                type 'a m = M.t * 'a
+                let return x     = M.zero (), x
+                let bind (m,x) f =
+                  let m',y = f x in
+                  M.plus m m', y
+              end)
   let listen (x,y) = (x,(x,y))
   let run (x,y)    = (x,y)
   let write x      = (x,())
 end
 
-module WriterT(W : Writer)(M : BatInterfaces.Monad) =
+module WriterT(Mon : Monoid)(M : BatInterfaces.Monad) =
 struct
   module M = Make(M)
-  type t = W.t
-  type 'a m = 'a W.m M.m
+  module W = Writer(Mon)
+  type t = Mon.t
+  include Make(struct
+                module WM = Make(W)
+                type 'a m = 'a W.m M.m
 
-  module WM = Make(W)
-
-  let return   x = M.return (W.return x)
-  let bind x f =
-    M.bind x (fun x ->
-      let v,x = W.run x in
-      M.lift1 (WM.lift2
-                 (fun () y -> y)
-                 (W.write v))
-        (f x))
+                let return   x = M.return (W.return x)
+                let bind x f =
+                  M.bind x (fun x ->
+                            let v,x = W.run x in
+                            M.lift1 (WM.lift2
+                                       (fun () y -> y)
+                                       (W.write v))
+                                    (f x))
+              end)
 
   let listen x = M.lift1 W.listen x
   let write x = M.return (W.write x)
-  let pass xs = M.lift1 (fun x -> W.return x) xs
   let run xs = M.lift1 (fun x -> let (v,x) = W.run x in
                                  v,x) xs
+  let lift x = M.lift1 W.return x
 end
 
 module CollectionOpt(C : BaseCollectionM) =
@@ -487,20 +507,18 @@ struct
   let maxima p = C.maxima (cmp_on p)
 end
 
-module CollectionWriter(W : sig
-  include Writer
+module CollectionWriter(Mon : sig
+  include Monoid
   val cmp : t -> t -> bool
 end)(C : BaseCollectionM) =
 struct
-  include WriterT(W)(C)
+  include WriterT(Mon)(C)
   let zero () = C.zero ()
   let lplus xs ys = C.lplus xs ys
   let null xs = C.null xs
 
-  let cmp_on p x y =
-    let (vx,x) = W.run x in
-    let (vy,y) = W.run y in
-    p x y && W.cmp vx vy
+  let cmp_on p (vx,x) (vy,y) =
+    p x y && Mon.cmp vx vy
 
   let difference p = C.difference (cmp_on p)
   let unique ?(cmp = (=)) = C.unique ~cmp:(cmp_on cmp)

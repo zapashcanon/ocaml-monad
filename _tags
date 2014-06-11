@@ -1,7 +1,7 @@
 # OASIS_START
-# DO NOT EDIT (digest: 7ccc7f026cc0da3faa161570bef1885a)
-# Ignore VCS directories, you can use the same kind of rule outside 
-# OASIS_START/STOP if you want to exclude directories that contains 
+# DO NOT EDIT (digest: 96a76fbdb03a6b45c8e01ff115524a89)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
 <**/.svn>: -traverse
 <**/.svn>: not_hygienic
@@ -16,4 +16,5 @@
 # Library monadlib
 "src/monadlib.cmxs": use_monadlib
 <src/*.ml{,i}>: pkg_batteries
+<src/*.ml{,i}>: pkg_threads
 # OASIS_STOP

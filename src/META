@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: 74ff08c66bbedea2952fc270b0b49e44)
-version = "0.1"
+# DO NOT EDIT (digest: 35eb4bcf1b5b41fa1da29227360ff24c)
+version = "0.2"
 description =
 "A starter library for monads, with transformers and applicatives."
 requires = "batteries threads"

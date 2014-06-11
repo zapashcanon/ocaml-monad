@@ -1,6 +1,6 @@
 OASISFormat: 0.3
 Name:        monadlib
-Version:     0.1
+Version:     0.2
 Synopsis:    A starter library for monads, with transformers and applicatives.
 Authors:     Phil Scott
 License:     MIT

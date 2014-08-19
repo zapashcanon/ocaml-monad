@@ -178,7 +178,7 @@ end
 
 module Error(E : sig type e val defaultError : e end) :
 sig
-  include MonadPlus with type 'a m = 'a err
+  include MonadPlus
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m

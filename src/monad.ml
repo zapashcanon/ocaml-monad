@@ -419,13 +419,13 @@ struct
 end
 
 module Retry(E : sig
-                   type err
+                   type e
                    type arg
                    type tag
-                   val defaultError : err
+                   val defaultError : e
                  end) =
 struct
-  type 'a err = Error  of (E.tag * (E.arg -> 'a err)) list * E.err
+  type 'a err = Error  of (E.tag * (E.arg -> 'a err)) list * E.e
               | Result of 'a
   include MakePlus(
      struct
@@ -444,12 +444,17 @@ struct
          | _        -> false
      end)
 
+  let add_retry tag retry = function
+    | Error (retries,e) -> Error ((tag,retry)::retries,e)
+    | x                 -> x
   let throw e = Error ([],e)
 
   let catch x handler =
     match x with
-      Error (retries,e) -> handler retries e
-    | Result x          -> return x
+    | Error (_,e) -> handler e
+    | Result x    -> return x
+
+  let run_retry err = err
 end
 
 module Continuation(T : sig type r end) = struct

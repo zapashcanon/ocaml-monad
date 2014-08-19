@@ -117,6 +117,22 @@ module LazyListM : LazyPlus with type 'a m = 'a LazyList.t
 
 module Option : MonadPlus with type 'a m = 'a option
 
+module Retry(E : sig
+                   type e
+                   type arg
+                   type tag
+                   val defaultError : e
+                 end) :
+sig
+  include MonadPlus
+  type 'a err = Error  of (E.tag * (E.arg -> 'a m)) list * E.e
+              | Result of 'a
+  val throw     : E.e -> 'a m
+  val catch     : 'a m -> (E.e -> 'a m) -> 'a m
+  val add_retry : E.tag -> (E.arg -> 'a m) -> 'a m -> 'a m
+  val run_retry : 'a m -> 'a err
+end
+
 (** For the incorruptible programmer:
 
     A continuation of type 'a has type [('a -> 'r) -> 'r]

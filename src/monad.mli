@@ -57,6 +57,8 @@ module type Monad =
     include Applicative.Applicative with type 'a m := 'a m
 
     val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
+    val (>=>) : ('a -> 'b m) -> ('b -> 'c m) -> ('a -> 'c m)
+    val (<=<) : ('b -> 'c m) -> ('a -> 'b m) -> ('a -> 'c m)
     val join  : 'a m m -> 'a m
     val filter_m : ('a -> bool m) -> 'a list -> 'a list m
     val onlyif : bool -> unit m -> unit m
@@ -176,7 +178,9 @@ end
 
 module Error(E : sig type e val defaultError : e end) :
 sig
-  include MonadPlus
+  type 'a err = Error  of E.e
+              | Result of 'a
+  include MonadPlus with type 'a m = 'a err
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m

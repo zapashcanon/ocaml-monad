@@ -24,6 +24,8 @@ sig
   include Applicative.Applicative with type 'a m := 'a m
 
   val (>>=)    : 'a m -> ('a -> 'b m) -> 'b m
+  val (>=>) : ('a -> 'b m) -> ('b -> 'c m) -> ('a -> 'c m)
+  val (<=<) : ('b -> 'c m) -> ('a -> 'b m) -> ('a -> 'c m)
   val join     : 'a m m -> 'a m
   val filter_m : ('a -> bool m) -> 'a list -> 'a list m
   val onlyif : bool -> unit m -> unit m
@@ -57,7 +59,9 @@ module Make(M : BatInterfaces.Monad) =
 struct
   include M
 
-  let (>>=)  = bind
+  let (>>=)       = bind
+  let (>=>) g f x = g x >>= f
+  let (<=<) f g x = g x >>= f
 
   let lift1 f x     = x >>= fun x -> return (f x)
   let lift2 f x y   = x >>= fun x -> lift1 (f x) y

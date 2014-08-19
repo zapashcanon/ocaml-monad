@@ -415,6 +415,40 @@ struct
                | x       -> M.return x)
 end
 
+module Retry(E : sig
+                   type err
+                   type arg
+                   type tag
+                   val defaultError : err
+                 end) =
+struct
+  type 'a err = Error  of (E.tag * (E.arg -> 'a err)) list * E.err
+              | Result of 'a
+  include MakePlus(
+     struct
+       type 'a m = 'a err
+       let return x = Result x
+       let rec bind x f = match x with
+         | Result x -> f x
+         | Error (retries,e) ->
+            Error (BatList.map (fun (t,r) -> t,fun arg -> bind (r arg) f) retries,e)
+       let zero ()  = Error ([],E.defaultError)
+       let plus x y = match x with
+           Error  _ -> y
+         | Result x -> Result x
+       let null x   = match x with
+           Error _  -> true
+         | _        -> false
+     end)
+
+  let throw e = Error ([],e)
+
+  let catch x handler =
+    match x with
+      Error (retries,e) -> handler retries e
+    | Result x          -> return x
+end
+
 module Continuation(T : sig type r end) = struct
   include Make(struct
                 type 'a m = ('a -> T.r) -> T.r

@@ -178,10 +178,13 @@ end
 
 module Error(E : sig type e val defaultError : e end) :
 sig
+  type 'a err = Error  of E.e
+              | Result of 'a
   include MonadPlus
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m
+  val run_error : 'a m -> 'a err
 end
 
 (** Monads for collections. Stream is the current use-case for this, since it
@@ -308,11 +311,14 @@ end
 
 module ErrorT(E : sig type e val defaultError : e end)(M : BatInterfaces.Monad) :
 sig
+  type 'a err = Error  of E.e
+              | Result of 'a
   include Monad
 
-  val throw : E.e -> 'a m
-  val catch : 'a m -> (E.e -> 'a m) -> 'a m
-  val lift  : 'a M.m -> 'a m
+  val throw     : E.e -> 'a m
+  val catch     : 'a m -> (E.e -> 'a m) -> 'a m
+  val lift      : 'a M.m -> 'a m
+  val run_error : 'a m -> 'a err M.m
 end
 
 module StateT(T : sig type s end)(M : BatInterfaces.Monad) :

@@ -385,6 +385,8 @@ struct
     match x with
       Error e  -> handler e
     | Result x -> return x
+
+  let run_error err = err
 end
 
 module ErrorT(E : sig type e val defaultError : e end)(M : BatInterfaces.Monad) =
@@ -413,6 +415,7 @@ struct
     M.bind x (function
                | Error e -> handler e
                | x       -> M.return x)
+  let run_error err = err
 end
 
 module Retry(E : sig

@@ -387,6 +387,34 @@ struct
     | Result x -> return x
 end
 
+module ErrorT(E : sig type e val defaultError : e end)(M : BatInterfaces.Monad) =
+struct
+  type 'a err = Error  of E.e
+              | Result of 'a
+  module M = Make(M)
+  include MakePlus(struct
+                    type 'a m = 'a err M.m
+                    let return x = M.return (Result x)
+                    let bind x f =
+                      M.bind x (function
+                                 | Result x -> f x
+                                 | Error e  -> M.return (Error e))
+                    let zero () = M.return (Error E.defaultError)
+                    let plus x y =
+                      M.bind x (function
+                                 | Error _ -> y
+                                 | x       -> M.return x)
+                    let null _ = false
+              end)
+
+  let lift x  = M.lift1 (fun x -> Result x) x
+  let throw e = M.return (Error e)
+  let catch x handler =
+    M.bind x (function
+               | Error e -> handler e
+               | x       -> M.return x)
+end
+
 module Continuation(T : sig type r end) = struct
   include Make(struct
                 type 'a m = ('a -> T.r) -> T.r

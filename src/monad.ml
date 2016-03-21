@@ -41,7 +41,7 @@ sig
   val of_list : 'a list -> 'a m
   val sum       : 'a list m -> 'a m
   val msum      : 'a m list -> 'a m
-  val guard     : bool -> 'a m -> 'a m
+  val guard     : bool -> unit m
   val transpose : 'a list m -> 'a m list
 end
 
@@ -105,7 +105,7 @@ struct
       (fun xs -> List.fold_right plus (List.map return xs) (zero ()))
   let msum xs = List.fold_left plus (zero ()) xs
 
-  let guard b x = if b then x else zero ()
+  let guard b = if b then return () else zero ()
 
   let rec transpose xs =
     let hds = sum (lift1 (BatList.take 1) xs) in

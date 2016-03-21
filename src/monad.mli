@@ -76,7 +76,7 @@ module type MonadPlus =
     val of_list : 'a list -> 'a m
     val sum  : 'a list m -> 'a m
     val msum : 'a m list -> 'a m
-    val guard : bool -> 'a m -> 'a m
+    val guard : bool -> unit m
 
     (** Generalises matrix transposition. This will loop infinitely if
   {! BasePlus.null} cannot answer [true] for [zero]es. *)

@@ -10,8 +10,8 @@ module type TraversableBaseA =
 module type Base =
   sig
     type 'a t
-    module BaseWithA : functor(A : Applicative.Applicative) ->
-                       TraversableBaseA with type 'a m = 'a A.m
+    module BaseOfA : functor(A : Applicative.Applicative) ->
+                     TraversableBaseA with type 'a m = 'a A.m
                                          and type 'a t = 'a t
   end
 
@@ -27,15 +27,15 @@ module type Traversable =
     val lift1 : ('a -> 'b) -> 'a t -> 'b t
     val foldMap : ('a -> 'b) -> ('b -> 'b -> 'b) -> 'b -> 'a t -> 'b
     val foldr : ('a -> 'b -> 'b) -> 'b -> 'a t -> 'b
-    module WithA : functor(A : Applicative.Applicative) ->
-                   TraversableA with type 'a m = 'a A.m
-                                 and type 'a t = 'a t
+    module OfA : functor(A : Applicative.Applicative) ->
+                 TraversableA with type 'a m = 'a A.m
+                               and type 'a t = 'a t
   end
 
 module Make(B : Base) : Traversable with type 'a t = 'a B.t =
   struct
     include B
-    module TId = B.BaseWithA(Monad.Id)
+    module TId = B.BaseOfA(Monad.Id)
     let lift1 = TId.traverse
     let foldMap (type b) f p b t =
       let module A = Applicative.Const(struct
@@ -45,12 +45,12 @@ module Make(B : Base) : Traversable with type 'a t = 'a B.t =
                                         end) in
       let module TA : TraversableBaseA
                  with type 'a m = b
-                  and type 'a t = 'a B.t = B.BaseWithA(A) in
+                  and type 'a t = 'a B.t = B.BaseOfA(A) in
       TA.traverse f t
     let foldr f b t = foldMap f (%) identity t b
-    module WithA(A : Applicative.Applicative) =
+    module OfA(A : Applicative.Applicative) =
       struct
-        include B.BaseWithA(A)
+        include B.BaseOfA(A)
         let sequence t = traverse identity t
       end
   end

@@ -13,15 +13,16 @@ module type TraversableBaseA =
     type 'a t
     type 'a m
 
-    val traverse : ('a -> 'b m) -> 'a t -> 'b t m end
+    val traverse : ('a -> 'b m) -> 'a t -> 'b t m
+  end
 
 (** A basic traversable.  *)
 module type Base =
   sig
     type 'a t
-    module BaseWithA : functor(A : Applicative.Applicative) ->
-                       TraversableBaseA with type 'a m = 'a A.m
-                                         and type 'a t = 'a t
+    module BaseOfA : functor(A : Applicative.Applicative) ->
+                     TraversableBaseA with type 'a m = 'a A.m
+                                       and type 'a t = 'a t
   end
 
 (** {6 Library Types } *)
@@ -33,14 +34,14 @@ module type TraversableA =
     val sequence : 'a m t -> 'a t m
   end
 
-(** A traversable library *)<
+(** A traversable library *)
 module type Traversable =
   sig
     type 'a t
     val lift1 : ('a -> 'b) -> 'a t -> 'b t
     val foldMap : ('a -> 'b) -> ('b -> 'b -> 'b) -> 'b -> 'a t -> 'b
     val foldr : ('a -> 'b -> 'b) -> 'b -> 'a t -> 'b
-    module WithA : functor(A : Applicative.Applicative) ->
+    module OfA : functor(A : Applicative.Applicative) ->
                    TraversableA with type 'a m = 'a A.m
                                  and type 'a t = 'a t
   end

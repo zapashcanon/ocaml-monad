@@ -214,7 +214,7 @@ let rec maxima p xs =
 let list_any p xs =
   let rec loop =
     function [] -> false
-      | x :: xs -> p x or loop xs
+      | x :: xs -> p x || loop xs
   in loop xs
 
 let nub p xs =

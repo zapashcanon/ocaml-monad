@@ -11,7 +11,7 @@ Plugins:     META (0.3)
 
 Library monadlib
   Path:         src
-  Modules:      LazyList, TagTree, Monad, Applicative
+  Modules:      LazyList, TagTree, Monad, Applicative, Applicative, Traversable
   BuildDepends: batteries (>= 2.0), threads
   Install:      true
   XMETAEnable:  true
@@ -23,5 +23,4 @@ Document monadlib
   Install:              true
   BuildTools+:          ocamldoc
   XOCamlbuildPath:      src
-  XOCamlbuildModules:   LazyList, TagTree, Monad, Applicative
-  
+  XOCamlbuildModules:   LazyList, TagTree, Monad, Applicative, Traversable

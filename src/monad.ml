@@ -267,6 +267,13 @@ struct
       (Ll.drop 1 (Ll.scan Mm.plus (M.zero ()) (yss ^@^ Ll.repeat (M.zero ()))))
 end
 
+module Id =
+  Make(struct
+          type 'a m = 'a
+          let return x  = x
+          let bind x f = f x
+        end)
+
 module LazyM =
   Make(struct
         type 'a m = 'a Lazy.t
@@ -503,13 +510,6 @@ struct
   let lift x s  = M.lift1 (fun x -> (s,x)) x
 end
 
-module type Monoid =
-sig
-  type t
-  val zero : unit -> t
-  val plus : t -> t -> t
-end
-
 module Reader(M : sig type t end) = struct
   include Make(struct
                 type 'a m = M.t -> 'a
@@ -521,7 +521,7 @@ module Reader(M : sig type t end) = struct
   let run e x    = x e
 end
 
-module Writer(M : Monoid) = struct
+module Writer(M : Applicative.Monoid) = struct
   include Make(struct
                 type 'a m = M.t * 'a
                 let return x     = M.zero (), x
@@ -534,7 +534,7 @@ module Writer(M : Monoid) = struct
   let write x      = (x,())
 end
 
-module WriterT(Mon : Monoid)(M : BatInterfaces.Monad) =
+module WriterT(Mon : Applicative.Monoid)(M : BatInterfaces.Monad) =
 struct
   module M = Make(M)
   module W = Writer(Mon)
@@ -582,7 +582,7 @@ struct
 end
 
 module CollectionWriter(Mon : sig
-  include Monoid
+  include Applicative.Monoid
   val cmp : t -> t -> bool
 end)(C : BaseCollectionM) =
 struct

@@ -13,13 +13,6 @@
 
 (** {6 Base Modules}*)
 
-module type Monoid =
-  sig
-    type t
-    val zero : unit -> t
-    val plus : t -> t -> t
-  end
-
 (** Monads with additional monoid structure. *)
 module type BasePlus =
   sig
@@ -108,6 +101,8 @@ module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m
 module MakeLazyPlus (M : BaseLazyPlus) : LazyPlus with type 'a m = 'a M.m
 
 (** {6 Specific monads} *)
+module Id : Monad with type 'a m = 'a
+
 (** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
 module LazyM : Monad with type 'a m = 'a Lazy.t
 
@@ -172,7 +167,7 @@ sig
   val run  : T.t -> 'a m -> 'a
 end
 
-module Writer(M : Monoid) :
+module Writer(M : Applicative.Monoid) :
 sig
   include Monad
 
@@ -349,7 +344,7 @@ sig
   val lift   : 'a M.m -> 'a m
 end
 
-module WriterT(Mon : Monoid)(M : BatInterfaces.Monad) :
+module WriterT(Mon : Applicative.Monoid)(M : BatInterfaces.Monad) :
 sig
   include Monad
   val listen : 'a m -> (Mon.t * 'a) m
@@ -382,7 +377,7 @@ sig
 end
 
 module CollectionWriter(Mon : sig
-                                include Monoid
+                                include Applicative.Monoid
                                 val cmp : t -> t -> bool
                               end)(C : BaseCollectionM) :
 sig

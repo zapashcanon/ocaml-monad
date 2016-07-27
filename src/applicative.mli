@@ -9,6 +9,13 @@
 
 (** {6 Base Modules} *)
 
+module type Monoid =
+  sig
+    type t
+    val zero : unit -> t
+    val plus : t -> t -> t
+  end
+
 module type Base =
 sig
   type 'a m
@@ -39,6 +46,10 @@ end
 
 (** {6 Library Creation} *)
 module Make(A : Base) : Applicative with type 'a m = 'a A.m
+
+(** {6 Specific Applicatives} *)
+module Const(T : sig include Monoid end) : Applicative
+  with type 'a m = T.t
 
 (** {6 Transformer } *)
 module Transform(A : Base)(Inner : Base) : Base with type 'a m = 'a Inner.m A.m

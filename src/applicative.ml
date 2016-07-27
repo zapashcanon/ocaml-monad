@@ -1,3 +1,10 @@
+module type Monoid =
+  sig
+    type t
+    val zero : unit -> t
+    val plus : t -> t -> t
+  end
+
 module type Base =
 sig
   type 'a m
@@ -43,6 +50,13 @@ struct
 
   let map_a f xs = sequence (List.map f xs)
 end
+
+module Const(M : sig include Monoid end) =
+  Make(struct
+	  type 'a m = M.t
+	  let return _ = M.zero ()
+	  let (<*>) f x = M.plus f x
+	end)
 
 module Transform(A : Base)(Inner : Base) =
 struct

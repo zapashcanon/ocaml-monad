@@ -3,7 +3,7 @@
 
 let
   myemacs =
-    with pkgs.emacsPackages; pkgs.emacsWithPackages
+    with pkgs.emacsPackages; with pkgs.emacsPackagesNg; pkgs.emacsWithPackages
       [ haskellMode magit emacsw3m tuaregMode ];
 in with pkgs; stdenv.mkDerivation {
   name = "monadlib";

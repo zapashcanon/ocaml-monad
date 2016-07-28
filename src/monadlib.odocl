@@ -1,7 +1,8 @@
 # OASIS_START
-# DO NOT EDIT (digest: 003719eccc53400701482932a3de813b)
+# DO NOT EDIT (digest: ab9973b29c8b9e457ddc8b39bedac16a)
 LazyList
 TagTree
+Scope
 Monad
 Applicative
 Traversable

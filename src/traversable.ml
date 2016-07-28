@@ -98,3 +98,16 @@ module List =
                 | x::xs -> A.lift2 (fun y ys -> y :: ys) (f x) (traverse f xs)
             end
         end)
+
+module Option =
+  Make (struct
+           type 'a t = 'a option
+           module BaseOfA(A : Applicative.Applicative) =
+            struct
+              include A
+              type 'a t = 'a option
+              let rec traverse f = function
+                | None -> A.return None
+                | Some x -> lift1 (fun x -> Some x) (f x)
+            end
+        end)

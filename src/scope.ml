@@ -20,7 +20,6 @@ module type Scope =
       ('a -> b option) -> ('a -> 'c m) -> 'a m -> 'c scope
     val inst : (b -> 'a m) -> 'a scope -> 'a m
     val abstract : ('a -> b option) -> 'a m -> 'a scope
-    (* module Monad : Monad.Monad *)
   end
 
 module Make(M : Monad.Monad)(B : sig type b end) : Scope =

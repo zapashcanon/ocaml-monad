@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 7e19c61a401729861cce27c9a52be1f2)
+# DO NOT EDIT (digest: bf84d9423bec2edfd1422f38dd0ef912)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -18,4 +18,9 @@ true: annot, bin_annot
 "src/monadlib.cmxs": use_monadlib
 <src/*.ml{,i,y}>: pkg_batteries
 <src/*.ml{,i,y}>: pkg_threads
+# Library examples
+"src/examples/examples.cmxs": use_examples
+<src/examples/*.ml{,i,y}>: pkg_batteries
+<src/examples/*.ml{,i,y}>: pkg_threads
+<src/examples/*.ml{,i,y}>: use_monadlib
 # OASIS_STOP

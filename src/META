@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 35eb4bcf1b5b41fa1da29227360ff24c)
+# DO NOT EDIT (digest: 445ba8cfc2feb5e5a39575fad4c17003)
 version = "0.2"
 description =
 "A starter library for monads, with transformers and applicatives."
@@ -9,5 +9,16 @@ archive(byte, plugin) = "monadlib.cma"
 archive(native) = "monadlib.cmxa"
 archive(native, plugin) = "monadlib.cmxs"
 exists_if = "monadlib.cma"
+package "examples" (
+ version = "0.2"
+ description =
+ "A starter library for monads, with transformers and applicatives."
+ requires = "batteries threads monadlib"
+ archive(byte) = "examples.cma"
+ archive(byte, plugin) = "examples.cma"
+ archive(native) = "examples.cmxa"
+ archive(native, plugin) = "examples.cmxs"
+ exists_if = "examples.cma"
+)
 # OASIS_STOP
 

@@ -16,6 +16,12 @@ Library monadlib
   Install:      true
   XMETAEnable:  true
 
+Library examples
+  Path:                 src/examples
+  Modules:              Lambda
+  BuildDepends:         batteries (>= 2.0), threads, monadlib
+  FindLibParent:        monadlib
+
 Document monadlib
   Title:                API reference for monadlib
   Type:                 ocamlbuild (0.3)
@@ -23,4 +29,4 @@ Document monadlib
   Install:              true
   BuildTools+:          ocamldoc
   XOCamlbuildPath:      src
-  XOCamlbuildModules:   LazyList, TagTree, Scope, Monad, Applicative, Traversable
+  XOCamlbuildModules:   LazyList, TagTree, Scope, Monad, Applicative, Traversable, Examples

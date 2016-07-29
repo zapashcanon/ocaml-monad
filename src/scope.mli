@@ -8,8 +8,9 @@ val free : 'a -> ('b,'a) var
 module type Scope =
   sig
     type ('b,'a) scope
+    type 'a m
                  
-    module Inner : Monad.Monad
+    module Inner : BatInterfaces.Monad with type 'a m = 'a m
     module Monad : functor (B : sig type b end) ->
                    Monad.Monad with type 'a m = (B.b,'a) scope
     val unscope : ('b,'a) scope -> ('b, 'a Inner.m) var Inner.m
@@ -23,3 +24,5 @@ module type Scope =
     val toScope : ('b,'a) scope -> ('b, 'a) var Inner.m
     val fromScope : ('b, 'a) var Inner.m -> ('b,'a) scope
   end
+
+module Make(M : Monad.Monad) : Scope with type 'a m = 'a M.m

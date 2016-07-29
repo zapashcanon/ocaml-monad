@@ -14,8 +14,9 @@ let bifold f g = function
 module type Scope =
   sig
     type ('b,'a) scope
+    type 'a m
                  
-    module Inner : Monad.Monad
+    module Inner : BatInterfaces.Monad with type 'a m = 'a m
     module Monad : functor (B : sig type b end) ->
                    Monad.Monad with type 'a m = (B.b,'a) scope
     val unscope : ('b,'a) scope -> ('b, 'a Inner.m) var Inner.m
@@ -30,51 +31,52 @@ module type Scope =
     val fromScope : ('b, 'a) var Inner.m -> ('b,'a) scope
   end
 
-module Make(M : Monad.Monad) : Scope =
+module Make(M : Monad.Monad) =
   struct
+    type 'a m = 'a M.m
     module Inner = M
-    type ('b,'a) scope = Scope of ('b,'a M.m) var M.m
+    type ('b,'a) scope = Scope of ('b,'a Inner.m) var Inner.m
 
     let unscope scope = let Scope body = scope in body
                                           
     module Monad(B : sig type b end) =
       Monad.Make(struct
                     type 'a m = (B.b,'a) scope
-                    let return x = Scope (M.return (F (M.return x)))
+                    let return x = Scope (Inner.return (F (Inner.return x)))
                     let bind scope f =
                       let open M in
                       Scope (unscope scope >>= function
-                             | B b -> M.return (B b)
+                             | B b -> Inner.return (B b)
                              | F free -> free >>= (unscope % f))
                   end)
 
     let abstractInst f g t =
-      Scope (M.lift1 (fun x ->
+      Scope (Inner.lift1 (fun x ->
                       match f x with
                       | None -> F (g x)
                       | Some y -> B y) t)
-    let abstract f = abstractInst f M.return
+    let abstract f = abstractInst f Inner.return
     let splat f g scope =
       let open M in
       unscope scope >>= function
       | B b -> f b
       | F f -> f >>= g
-    let mapBound f scope = Scope (M.lift1 (function
+    let mapBound f scope = Scope (Inner.lift1 (function
                                             | B b -> B (f b)
                                             | F x -> F x)
                                           (unscope scope))
-    let lift x = Scope (M.return (F x))
+    let lift x = Scope (Inner.return (F x))
     let toScope scope =
       let open M in
       unscope scope >>= function
-      | B b -> M.return (B b)
-      | F f -> M.lift1 (fun x -> F x) f
+      | B b -> Inner.return (B b)
+      | F f -> Inner.lift1 (fun x -> F x) f
     let fromScope x =
-      Scope (M.lift1 (function
+      Scope (Inner.lift1 (function
                        | B b -> B b
-                       | F x -> F (M.return x)) x)
+                       | F x -> F (Inner.return x)) x)
 
-    module Traversable(T : Traversable.Traversable with type 'a t = 'a M.m)
+    module Traversable(T : Traversable.Traversable with type 'a t = 'a Inner.m)
                       (B : sig type b end) : Traversable.Traversable =
       Traversable.Make(
           struct

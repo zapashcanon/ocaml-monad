@@ -6,7 +6,7 @@ module rec TermScope : Scope.Scope
          sig
            type 'a m =
              | Var of 'a
-             | App of 'a m  * 'a m
+             | App of 'a m * 'a m
              | Abs of (string,'a) TermScope.scope
            val print_term : string m -> string
            include BatInterfaces.Monad with type 'a m := 'a m

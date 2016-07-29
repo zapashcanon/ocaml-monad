@@ -32,7 +32,7 @@ module Make(M : Monad.Monad)(B : sig type b end) : Scope
     type 'a scope = Scope of (B.b,'a M.m) var M.m
     type 'a m = 'a M.m
     type b = B.b
-                   
+
     let unscope scope = let Scope body = scope in body
     let abstractSubst f g t =
       Scope (M.lift1 (fun x ->

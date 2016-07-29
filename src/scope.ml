@@ -16,13 +16,18 @@ module type Scope =
     type 'a scope
     type 'a m
     type b
+    val unscope : 'a scope -> (b, 'a m) var m
     val abstractSubst :
       ('a -> b option) -> ('a -> 'c m) -> 'a m -> 'c scope
     val inst : (b -> 'a m) -> 'a scope -> 'a m
     val abstract : ('a -> b option) -> 'a m -> 'a scope
+    val lift : 'a m -> 'a scope
+    val toScope : 'a scope -> (b, 'a) var m
+    val fromScope : (b, 'a) var m -> 'a scope
   end
 
-module Make(M : Monad.Monad)(B : sig type b end) : Scope =
+module Make(M : Monad.Monad)(B : sig type b end) : Scope
+       with type 'a m = 'a M.m and type b = B.b =
   struct
     type 'a scope = Scope of (B.b,'a M.m) var M.m
     type 'a m = 'a M.m
@@ -41,6 +46,16 @@ module Make(M : Monad.Monad)(B : sig type b end) : Scope =
                       match f x with
                       | None -> F (M.return x)
                       | Some y -> B y) t)
+    let lift x = Scope (M.return (F x))
+    let toScope scope =
+      let open M in
+      unscope scope >>= function
+      | B b -> M.return (B b)
+      | F f -> M.lift1 (fun x -> F x) f
+    let fromScope x =
+      Scope (M.lift1 (function
+                       | B b -> B b
+                       | F x -> F (M.return x)) x)
 
     module Monad =
       Monad.Make(struct
@@ -48,9 +63,9 @@ module Make(M : Monad.Monad)(B : sig type b end) : Scope =
                     let return x = Scope (M.return (F (M.return x)))
                     let bind scope f =
                       let open M in
-                      Scope (unscope scope >>=
-                               bifold (fun b -> M.return (B b))
-                                      (fun free -> free >>= (unscope % f)))
+                      Scope (unscope scope >>= function
+                             | B b -> M.return (B b)
+                             | F free -> free >>= (unscope % f))
                   end)
 
     module Traversable(T : Traversable.Traversable with type 'a t = 'a m) :

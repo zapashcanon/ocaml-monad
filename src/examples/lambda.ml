@@ -43,9 +43,9 @@ module rec TermScope : Scope.Scope
                        ^ print i app_prec print_v t)
            | Abs body ->
               "λ. "
-              ^ print i 10 (fun j outer_prec ->
+              ^ print 0 10 (fun j outer_prec ->
                             function
-                            | Scope.B b -> b ^ "_" ^ string_of_int (i + j)
+                            | Scope.B b -> b ^ "_" ^ string_of_int j
                             | Scope.F tm -> print (i+1) outer_prec print_v tm)
                       (TermScope.unscope body)
          in

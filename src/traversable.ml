@@ -25,6 +25,7 @@ module type Traversable =
   sig
     type 'a t
     val lift1 : ('a -> 'b) -> 'a t -> 'b t
+    val (<$>) : ('a -> 'b) -> 'a t -> 'b t
     val foldr : ('a -> 'b -> 'b) -> 'b -> 'a t -> 'b
     val void : 'a t -> 'b t option
     val is_empty : 'a t -> bool
@@ -47,6 +48,7 @@ module Make(B : Base) : Traversable with type 'a t = 'a B.t =
     include B
     module TId = B.BaseOfA(Monad.Id)
     let lift1 = TId.traverse
+    let (<$>) = TId.traverse
     let foldMap (type b) f p b =
       let module A = Applicative.Const(struct
                                           type t = b
@@ -108,6 +110,6 @@ module Option =
               type 'a t = 'a option
               let rec traverse f = function
                 | None -> A.return None
-                | Some x -> lift1 (fun x -> Some x) (f x)
+                | Some x -> (fun x -> Some x) <$> f x
             end
         end)

@@ -39,6 +39,7 @@ module type Traversable =
   sig
     type 'a t
     val lift1 : ('a -> 'b) -> 'a t -> 'b t
+    val (<$>) : ('a -> 'b) -> 'a t -> 'b t
     val foldr : ('a -> 'b -> 'b) -> 'b -> 'a t -> 'b
     val void : 'a t -> 'b t option
     val is_empty : 'a t -> bool

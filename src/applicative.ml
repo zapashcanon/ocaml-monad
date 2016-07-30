@@ -61,7 +61,9 @@ module Const(M : sig include Monoid end) =
 module Transform(A : Base)(Inner : Base) =
 struct
   module A = Make(A)
-  type 'a m = 'a Inner.m A.m
-  let return x = A.return (Inner.return x)
-  let (<*>) f x = A.lift2 Inner.(<*>) f x
+  include Make(struct
+                  type 'a m = 'a Inner.m A.m
+                  let return x = A.return (Inner.return x)
+                  let (<*>) f x = A.lift2 Inner.(<*>) f x
+                end)
 end

@@ -52,4 +52,5 @@ module Const(T : sig include Monoid end) : Applicative
   with type 'a m = T.t
 
 (** {6 Transformer } *)
-module Transform(A : Base)(Inner : Base) : Base with type 'a m = 'a Inner.m A.m
+module Transform(A : Base)(Inner : Base) : Applicative
+       with type 'a m = 'a Inner.m A.m

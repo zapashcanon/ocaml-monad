@@ -10,7 +10,7 @@ module type TraversableBaseA =
 module type Base =
   sig
     type 'a t
-    module BaseOfA : functor(A : Applicative.Applicative) ->
+    module BaseOfA : functor(A : Applicative.Base) ->
                      TraversableBaseA with type 'a m = 'a A.m
                                          and type 'a t = 'a t
   end
@@ -38,7 +38,7 @@ module type Traversable =
     val product_ints : int t -> int
     val sum_floats : float t -> float
     val product_floats : float t -> float
-    module OfA : functor(A : Applicative.Applicative) ->
+    module OfA : functor(A : Applicative.Base) ->
                  TraversableA with type 'a m = 'a A.m
                                and type 'a t = 'a t
   end
@@ -81,7 +81,7 @@ module Make(B : Base) : Traversable with type 'a t = 'a B.t =
     let product_ints = foldr (fun x y -> x * y) 1
     let sum_floats = foldr (+.) 0.
     let product_floats = foldr (fun x y -> x *. y) 1.
-    module OfA(A : Applicative.Applicative) =
+    module OfA(A : Applicative.Base) =
       struct
         include B.BaseOfA(A)
         let sequence t = traverse identity t
@@ -91,22 +91,22 @@ module Make(B : Base) : Traversable with type 'a t = 'a B.t =
 module List =
   Make(struct
           type 'a t = 'a list
-          module BaseOfA(A : Applicative.Applicative) =
+          module BaseOfA(A : Applicative.Base) =
             struct
-              include A
+              include Applicative.Make(A)
               type 'a t = 'a list
               let rec traverse f = function
-                | [] -> A.return []
-                | x::xs -> A.lift2 (fun y ys -> y :: ys) (f x) (traverse f xs)
+                | [] -> return []
+                | x::xs -> lift2 (fun y ys -> y :: ys) (f x) (traverse f xs)
             end
         end)
 
 module Option =
   Make (struct
            type 'a t = 'a option
-           module BaseOfA(A : Applicative.Applicative) =
+           module BaseOfA(A : Applicative.Base) =
             struct
-              include A
+              include Applicative.Make(A)
               type 'a t = 'a option
               let rec traverse f = function
                 | None -> A.return None

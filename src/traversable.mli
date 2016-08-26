@@ -20,7 +20,7 @@ module type TraversableBaseA =
 module type Base =
   sig
     type 'a t
-    module BaseOfA : functor(A : Applicative.Applicative) ->
+    module BaseOfA : functor(A : Applicative.Base) ->
                      TraversableBaseA with type 'a m = 'a A.m
                                        and type 'a t = 'a t
   end
@@ -52,7 +52,7 @@ module type Traversable =
     val product_ints : int t -> int
     val sum_floats : float t -> float
     val product_floats : float t -> float
-    module OfA : functor(A : Applicative.Applicative) ->
+    module OfA : functor(A : Applicative.Base) ->
                    TraversableA with type 'a m = 'a A.m
                                  and type 'a t = 'a t
   end

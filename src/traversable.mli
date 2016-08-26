@@ -60,4 +60,4 @@ module type Traversable =
 (** {6 Library Creation} *)
 module Make : functor(B : Base) -> Traversable with type 'a t = 'a B.t
 
-module List : Traversable with type 'a t = 'a list                                                                   
+module List : Traversable with type 'a t = 'a list

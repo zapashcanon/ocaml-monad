@@ -9,7 +9,7 @@
 
     These results do not need to be computed if the tree
     simplification does not depend on the individual computations, as
-    is the case with the applicative interface. 
+    is the case with the applicative interface.
 
     @author Phil Scott
 *)

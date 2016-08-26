@@ -15,7 +15,7 @@ module type Scope =
   sig
     type ('b,'a) scope
     type 'a m
-                 
+
     module Inner : BatInterfaces.Monad with type 'a m = 'a m
     module Monad : functor (B : sig type b end) ->
                    Monad.Monad with type 'a m = (B.b,'a) scope
@@ -39,7 +39,7 @@ module Make(M : Monad.Monad) =
 
     let unscope scope = let Scope body = scope in body
     let scope body = Scope body
-                                          
+
     module Monad(B : sig type b end) =
       Monad.Make(struct
                     type 'a m = (B.b,'a) scope

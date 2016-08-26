@@ -80,17 +80,17 @@ module Make(M : Monad.Monad) =
       Traversable.Make(
           struct
             type 'a t = (B.b, 'a) scope
-            module BaseOfA(A : Applicative.Applicative) =
+            module BaseOfA(A : Applicative.Base) =
               struct
                 type 'a t = (B.b, 'a) scope
-                include A
+                include Applicative.Make(A)
                 module TA = T.OfA(A)
                 let traverse f x =
                   TA.traverse
                     (bifold (fun b -> A.return (B b))
-                            (A.lift1 (fun x -> F x) % TA.traverse f))
+                            (lift1 (fun x -> F x) % TA.traverse f))
                     (unscope x)
-                  |> A.lift1 (fun body -> Scope body)
+                  |> lift1 (fun body -> Scope body)
               end
           end)
   end

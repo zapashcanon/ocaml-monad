@@ -4,7 +4,7 @@
 let
   myemacs =
     with pkgs.emacsPackages; with pkgs.emacsPackagesNg; pkgs.emacsWithPackages
-      [ haskellMode magit emacsw3m tuaregMode ];
+      [ magit tuaregMode ];
 in with pkgs; stdenv.mkDerivation {
   name = "monadlib";
   buildInputs = [
